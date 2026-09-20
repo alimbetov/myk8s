@@ -56,6 +56,42 @@ close connection
 
 Практика: [RabbitMQ worker](../../showcases/11-rabbitmq-worker/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Для long-running requests, consumers и batch фиксирует допустимое время завершения и последствия принудительного interruption.
+
+### Разработчик
+
+Координирует:
+- Kubernetes grace period;
+- Spring shutdown timeout;
+- in-flight HTTP;
+- broker acknowledgements;
+- DB transaction boundaries.
+
+### Тестировщик
+
+Проверяет termination именно во время работы:
+- HTTP request;
+- Rabbit/Kafka delivery;
+- transaction;
+- scheduled task;
+- rollout/drain.
+
+### Перед следующей главой
+
+Нужно понимать:
+
+```text
+traffic drain
+ -> SIGTERM
+ -> graceful application work
+ -> clean exit
+ -> SIGKILL only as last resort
+```
+
 Проверено: 2026-09-20.
 
 Zero-downtime rollout требует не только readiness нового Pod, но и корректного выключения старого.
