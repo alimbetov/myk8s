@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# ConfigMap key application.yaml is mounted as a file and loaded by Spring Boot.
+# IMPORTANT:
+# - Kubernetes can update the mounted file, but Spring does not automatically rebuild its context.
+# - Versioned immutable ConfigMaps + rollout are a simple production pattern.
+# - Avoid subPath when expecting projected ConfigMap updates.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
