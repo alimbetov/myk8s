@@ -1,5 +1,62 @@
 # 12 — PostgreSQL connectivity and HikariCP
 
+## Учебная карта темы
+
+### Spring Boot -> PostgreSQL path
+
+```text
+HTTP request
+   ↓
+Spring transaction
+   ↓
+HikariCP
+   |
+   | acquire connection
+   v
+PostgreSQL logical Service
+   ↓
+primary / replica
+```
+
+### Самая важная capacity formula
+
+```text
+application replicas
+×
+Hikari maximumPoolSize
+=
+potential client connection budget
+```
+
+Например:
+
+```text
+20 Pods × pool 10 = ~200 connections
+```
+
+### Annotated config
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://orders-db-rw:5432/orders
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 3000
+```
+
+### Не путать timeout'ы
+
+```text
+connection-timeout Hikari
+ = сколько request ждёт свободный connection из pool
+
+DB/network connect timeout
+ = сколько client ждёт establishment к PostgreSQL
+```
+
+Практика: [CloudNativePG](../../showcases/12-cloudnativepg-primary-replicas/README.md).
+
 Проверено: 2026-09-20.
 
 Эта глава про приложение-клиент PostgreSQL. Развёртывание самой HA базы будет отдельным stateful track.
