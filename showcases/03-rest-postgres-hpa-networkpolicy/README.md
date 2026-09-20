@@ -12,6 +12,33 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+request
+   |
+   v
+Service
+   |
+   v
+Deployment
+   |
+   +--> HPA  ← управляет количеством Pods
+   |
+   +--> NetworkPolicy ← ограничивает network flows
+   |
+   +--> ConfigMap/Secret
+   |
+   v
+Spring Boot
+   |
+   +--> HikariCP
+   v
+PostgreSQL
+```
+
+Здесь впервые видно, что Kubernetes-настройки **переплетаются**: HPA влияет на число JVM, а число JVM — на число DB connections.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
