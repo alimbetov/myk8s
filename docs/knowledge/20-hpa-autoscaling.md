@@ -1,5 +1,63 @@
 # 20 — HPA / autoscaling
 
+## Учебная карта темы
+
+### Feedback loop HPA
+
+```text
+metrics
+   ↓
+HPA controller
+   ↓
+desired replicas
+   ↓
+Deployment scale
+   ↓
+more/fewer Pods
+   ↓
+new metrics
+```
+
+### CPU utilization
+
+```text
+actual CPU
+-----------
+CPU request
+=
+utilization
+```
+
+Поэтому `requests.cpu` — часть autoscaling semantics.
+
+### System-wide effect
+
+```text
+HPA scale up
+   ↓
+more JVMs
+   ↓
+more Hikari pools
+more Kafka/Rabbit consumers
+more downstream requests
+```
+
+### Annotated fragment
+
+```yaml
+minReplicas: 3
+maxReplicas: 20       # downstream capacity boundary too
+metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+```
+
+Практика: [Showcase 03](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md).
+
 Проверено: 2026-09-20.
 
 Autoscaling — не «если CPU высокий, добавь Pods». Это feedback loop, который должен учитывать requests, startup time, downstream capacity и scale-down safety.
