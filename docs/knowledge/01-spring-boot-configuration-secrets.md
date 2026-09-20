@@ -50,6 +50,47 @@ env:
 
 Полные варианты: [mounted application.yaml](../../showcases/14-configmap-mounted-application-yaml/README.md) и [Secret configtree](../../showcases/15-secret-configtree/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Фиксирует configuration contract:
+- какие параметры environment-specific;
+- какие sensitive;
+- какие обязательны;
+- какие имеют safe defaults;
+- что требует rotation без downtime.
+
+### Разработчик
+
+Должен:
+- держать image одинаковым для environments;
+- использовать typed `@ConfigurationProperties`;
+- fail-fast на обязательных значениях;
+- разделять ConfigMap и Secret;
+- понимать env vs mounted-file reload semantics.
+
+### Тестировщик
+
+Проверяет:
+- отсутствующий обязательный property;
+- неверный тип/формат;
+- missing Secret key;
+- rollout после изменения env-based config;
+- rotation credentials;
+- что secret value не появляется в logs.
+
+### Перед следующей главой
+
+Должно быть понятно:
+
+```text
+Config source
+ -> Pod delivery
+ -> Spring Environment
+ -> typed application configuration
+```
+
 Проверено: 2026-09-20.
 
 Цель главы — понять не только «как передать env», а **как построить конфигурационный контракт**, чтобы один image безопасно работал в dev/test/prod.
