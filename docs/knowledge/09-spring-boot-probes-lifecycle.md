@@ -251,6 +251,13 @@ External exposure Actuator endpoints должно быть осознанным.
 - health endpoint быстрый;
 - Actuator не раскрывает sensitive details.
 
+## Связанные production-like примеры
+
+- [Internal REST — readiness -> EndpointSlice](../../showcases/01-internal-rest-service/README.md)
+- [Public API — edge routing + Ready backends](../../showcases/02-public-api-ingress-tls/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://docs.spring.io/spring-boot/reference/actuator/endpoints.html
