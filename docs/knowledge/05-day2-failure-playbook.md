@@ -1,5 +1,57 @@
 # 05 — Day-2 operations and failure playbook
 
+## Учебная карта темы
+
+### Как искать проблему сверху вниз
+
+```text
+Desired state correct?
+       ↓
+Pod scheduled?
+       ↓
+Image/container started?
+       ↓
+Spring startup succeeded?
+       ↓
+Probes healthy?
+       ↓
+Service has endpoints?
+       ↓
+DNS/network works?
+       ↓
+Dependency reachable?
+       ↓
+Business operation works?
+```
+
+Это важнее команды `kubectl delete pod`.
+
+### Симптом -> слой
+
+```text
+Pending            -> scheduling / PVC / affinity
+ImagePullBackOff   -> image / registry
+CrashLoopBackOff   -> process startup/runtime
+Running NotReady   -> readiness/application dependency
+DNS error          -> Service/DNS/NetworkPolicy
+connect timeout    -> network / targetPort / dependency
+401                -> authentication
+403                -> authorization
+```
+
+### Базовый incident loop
+
+```bash
+kubectl get pod -o wide
+kubectl describe pod <pod>
+kubectl logs <pod>
+kubectl logs <pod> --previous
+kubectl get svc,endpointslice
+kubectl get events --sort-by=.lastTimestamp
+```
+
+> Сначала сохраняйте evidence, потом restart.
+
 Проверено: 2026-09-20.
 
 Day-1 — «мы смогли deploy». Day-2 — **как система живёт месяцами после deploy**: failures, upgrades, rotations, drains, incidents, restore и troubleshooting.
