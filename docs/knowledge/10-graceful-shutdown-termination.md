@@ -1,5 +1,61 @@
 # 10 — Graceful shutdown and termination lifecycle
 
+## Учебная карта темы
+
+### Что происходит при удалении Pod
+
+```text
+Pod termination requested
+   ↓
+Endpoint state changes / traffic draining begins
+   ↓
+preStop hook if configured
+   ↓
+SIGTERM to container process
+   ↓
+Spring graceful shutdown
+   ↓
+in-flight work completes
+   ↓
+process exits
+   |
+   └── if grace expires -> SIGKILL
+```
+
+### Временная модель
+
+```text
+terminationGracePeriodSeconds = 30s
+
+Spring shutdown timeout
+        <
+Kubernetes hard grace deadline
+```
+
+### Annotated fragment
+
+```yaml
+spec:
+  terminationGracePeriodSeconds: 30
+
+# Spring:
+# spring.lifecycle.timeout-per-shutdown-phase=20s
+```
+
+Для consumer это ещё важнее:
+
+```text
+stop new messages
+   ↓
+finish/nack current delivery
+   ↓
+commit/ack
+   ↓
+close connection
+```
+
+Практика: [RabbitMQ worker](../../showcases/11-rabbitmq-worker/README.md).
+
 Проверено: 2026-09-20.
 
 Zero-downtime rollout требует не только readiness нового Pod, но и корректного выключения старого.
