@@ -1,5 +1,81 @@
 # 08 — Resources, JVM memory and CPU
 
+## Учебная карта темы
+
+### Где resources находятся в системе
+
+```text
+Node capacity
+   |
+   v
+Scheduler
+   |
+   | uses requests
+   v
+Pod
+   |
+   +--> CPU request/limit
+   +--> Memory request/limit
+   |
+   v
+cgroups
+   |
+   v
+JVM
+   |
+   +--> heap
+   +--> metaspace
+   +--> thread stacks
+   +--> direct buffers
+   +--> code cache
+```
+
+### Главное различие
+
+```text
+request = сколько ресурсов резервируем / как scheduler считает
+limit   = runtime ceiling
+```
+
+Для JVM:
+
+```text
+memory limit
+  !=
+-Xmx
+```
+
+Потому что RSS JVM включает не только heap.
+
+### Annotated fragment
+
+```yaml
+resources:
+  requests:
+    cpu: 500m       # scheduler + HPA denominator
+    memory: 512Mi   # requested node capacity
+  limits:
+    memory: 768Mi   # cgroup ceiling; превышение может дать OOMKilled
+```
+
+### Важная системная связь
+
+```text
+CPU request
+   ↓
+HPA Utilization
+
+memory limit
+   ↓
+JVM sizing
+
+replicas
+   ↓
+total cluster + DB/client pressure
+```
+
+Практика: [REST + HPA + PostgreSQL](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md).
+
 Проверено: 2026-09-20.
 
 Resources — это договор между приложением, scheduler и Linux cgroups. Для Java это особенно важно: JVM heap — лишь часть container memory.
