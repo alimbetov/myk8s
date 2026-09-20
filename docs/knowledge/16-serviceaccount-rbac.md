@@ -179,6 +179,13 @@ kubectl describe rolebinding
 
 ServiceAccount, Role, RoleBinding, SecurityContext и `auth can-i` — важная практическая зона.
 
+## Связанные production-like примеры
+
+- [ServiceAccount without API token](../../showcases/01-internal-rest-service/README.md)
+- [Least-privilege RBAC manifest example](../../examples/security/rbac/serviceaccount-role-binding.yaml)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/security/service-accounts/
