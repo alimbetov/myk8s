@@ -252,6 +252,13 @@ CKAD касается Secret, Service DNS, probes/config. Hikari/transactions/fa
 - migrations rolling-compatible;
 - Hikari metrics exported.
 
+## Связанные production-like примеры
+
+- [Hikari × replicas × HPA](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+- [CloudNativePG rw/ro Services](../../showcases/12-cloudnativepg-primary-replicas/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://docs.spring.io/spring-boot/reference/data/sql.html
