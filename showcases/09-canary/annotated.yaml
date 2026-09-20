@@ -1,0 +1,150 @@
+# ============================================================
+# SHOWCASE 09 — CANARY DELIVERY
+# ============================================================
+#
+#                    HTTPRoute
+#                     /    \
+#                  90%      10%
+#                  /          \
+#        orders-stable     orders-canary
+#              |               |
+#              v               v
+#           v1 Pods          v2 Pods
+#
+# ВАЖНО:
+# replica ratio != traffic ratio
+# Weight задаёт routing, replicas задают capacity.
+# ============================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-v1
+spec:
+  replicas: 4
+
+  selector:
+    matchLabels:
+      app: orders
+      version: v1
+
+  template:
+    metadata:
+      labels:
+        app: orders
+        # Очень полезно также экспортировать version в metrics/logs.
+        version: v1
+
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/example/orders:1.0.0
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-v2
+spec:
+  # Canary replicas — это capacity,
+  # а НЕ процент traffic.
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: orders
+      version: v2
+
+  template:
+    metadata:
+      labels:
+        app: orders
+        version: v2
+
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/example/orders:1.1.0
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-stable
+spec:
+  selector:
+    app: orders
+    version: v1
+
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-canary
+spec:
+  selector:
+    app: orders
+    version: v2
+
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: orders-canary
+spec:
+  parentRefs:
+    - name: public-api
+
+  hostnames:
+    - api.example.kz
+
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /orders
+
+      backendRefs:
+        - name: orders-stable
+          port: 8080
+
+          # 90 relative shares traffic.
+          weight: 90
+
+        - name: orders-canary
+          port: 8080
+
+          # 10 relative shares traffic.
+          weight: 10
+
+# PRODUCTION:
+# Продвигайте canary только по metrics:
+# - error rate by version
+# - latency by version
+# - business failures
+#
+# DB/message contracts обязаны поддерживать одновременные v1 и v2.
