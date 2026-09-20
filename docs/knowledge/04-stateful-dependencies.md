@@ -46,6 +46,44 @@ StatefulSet != RabbitMQ quorum
 
 Смотрите: [CloudNativePG](../../showcases/12-cloudnativepg-primary-replicas/README.md), [Kafka/Strimzi](../../showcases/10-kafka-producer-consumer/README.md), [RabbitMQ](../../showcases/11-rabbitmq-worker/README.md), [StatefulSet](../../showcases/18-statefulset-headless-service/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Для каждой stateful dependency фиксирует:
+- где физически живут данные;
+- кто владеет replication/failover;
+- RPO/RTO;
+- backup/restore;
+- consistency expectations;
+- upgrade responsibility.
+
+### Разработчик
+
+Подключается через logical endpoints, а не Pod identities; проектирует pool/retry/timeout и не считает replication backup.
+
+### Тестировщик
+
+Проверяет:
+- Pod/node loss;
+- primary failover;
+- replica lag;
+- disk/PVC problems;
+- credential failure;
+- restore procedure, а не только backup creation.
+
+### Перед следующей главой
+
+Нужно различать:
+
+```text
+persistence
+replication
+high availability
+backup
+disaster recovery
+```
+
 Проверено: 2026-09-20.
 
 Эта глава объясняет, почему «запустить PostgreSQL в Kubernetes» и «эксплуатировать PostgreSQL production-grade» — совершенно разные задачи.
