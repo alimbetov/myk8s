@@ -12,6 +12,23 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Gateway / HTTPRoute
+        |
+        | weighted routing
+      /   \
+     v     v
+ stable  canary
+Service  Service
+   |       |
+  v1      v2
+Pods     Pods
+```
+
+Canary находится на стыке **traffic management + deployment strategy + observability**.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
