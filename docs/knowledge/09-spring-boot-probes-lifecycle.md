@@ -1,5 +1,58 @@
 # 09 — Spring Boot probes and application lifecycle
 
+## Учебная карта темы
+
+### Три разных вопроса Kubernetes
+
+```text
+startupProbe
+  "Приложение вообще успело стартовать?"
+
+livenessProbe
+  "Этот process нужно перезапустить?"
+
+readinessProbe
+  "Можно ли отправлять сюда новый traffic?"
+```
+
+### Runtime flow
+
+```text
+container starts
+   ↓
+startupProbe
+   ↓ success
+liveness/readiness active
+   ↓
+readiness 200
+   ↓
+Pod Ready=True
+   ↓
+EndpointSlice ready=true
+   ↓
+Service routes traffic
+```
+
+### Annotated fragment
+
+```yaml
+startupProbe:
+  httpGet:
+    path: /livez
+    port: http
+  periodSeconds: 5
+  failureThreshold: 30   # до ~150s на startup
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: http
+```
+
+> **Не делайте DB/Kafka availability liveness condition.** Иначе outage зависимости превращается в mass restart storm.
+
+Практика: [Showcase 01](../../showcases/01-internal-rest-service/README.md).
+
 Проверено: 2026-09-20.
 
 Probe — это не просто URL в YAML. Это контракт между kubelet, Spring Boot и Service о состоянии процесса.
