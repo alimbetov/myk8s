@@ -12,6 +12,26 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Internet
+   |
+   v
+INGRESS / TLS   ← этот стенд
+   |
+   v
+Service
+   |
+   v
+Deployment / Ready Pods
+   |
+   v
+Spring Boot
+```
+
+Ingress — это **внешний routing layer перед Service**. Он не заменяет Service и не выбирает Pods напрямую.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
