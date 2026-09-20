@@ -1,3 +1,11 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Baseline internal Spring Boot API.
+# IMPORTANT:
+# - Service.selector must match Pod labels.
+# - Service.targetPort should match the named container port.
+# - readiness controls whether the Pod appears as a ready Service endpoint.
+# - ConfigMap is for non-secret config; Secret is for credentials.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
