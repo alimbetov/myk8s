@@ -1,0 +1,175 @@
+# ============================================================
+# SHOWCASE 10 — KAFKA PRODUCER/CONSUMER WITH STRIMZI
+# ============================================================
+#
+# orders-api producer
+#      |
+#      | event-bus-kafka-bootstrap:9092
+#      v
+# Kafka cluster
+#      |
+#      | topic orders.created
+#      v
+# notification-worker consumer group
+#
+# REQUIREMENT:
+# Strimzi Operator + CRDs already installed.
+# ============================================================
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: dual-role
+
+  labels:
+    # OPERATOR-SPECIFIC MAPPING:
+    # этот pool относится к Kafka CR event-bus.
+    strimzi.io/cluster: event-bus
+
+spec:
+  # Три Kafka nodes.
+  replicas: 3
+
+  # Для стенда controller+broker совмещены.
+  # Production может разделить pools.
+  roles:
+    - controller
+    - broker
+
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+
+        # Каждый node получает persistent storage.
+        size: 20Gi
+
+        # DATA SAFETY:
+        # claim не удаляем автоматически вместе с Kafka CR.
+        deleteClaim: false
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: event-bus
+spec:
+  kafka:
+    listeners:
+      - name: plain
+        port: 9092
+
+        # Internal listener — только cluster internal endpoint.
+        type: internal
+        tls: false
+
+    config:
+      # Для трёх brokers RF=3.
+      default.replication.factor: 3
+
+      # При RF=3 min ISR=2:
+      # producer acks=all требует минимум 2 ISR для write.
+      min.insync.replicas: 2
+
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: orders-created
+
+  labels:
+    # Topic Operator связывает topic с cluster event-bus.
+    strimzi.io/cluster: event-bus
+
+spec:
+  topicName: orders.created
+
+  # Parallelism unit.
+  partitions: 6
+
+  # Copies per partition.
+  replicas: 3
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-client-config
+data:
+  # OPERATOR-CREATED bootstrap Service.
+  # Клиент НЕ знает broker Pod names.
+  KAFKA_BOOTSTRAP_SERVERS: event-bus-kafka-bootstrap:9092
+
+  ORDERS_CREATED_TOPIC: orders.created
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: orders-api
+
+  template:
+    metadata:
+      labels:
+        app: orders-api
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          # Producer получает bootstrap/topic config.
+          envFrom:
+            - configMapRef:
+                name: kafka-client-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-worker
+spec:
+  # 3 consumers на 6 partitions => примерно 2 partitions/consumer.
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: notification-worker
+
+  template:
+    metadata:
+      labels:
+        app: notification-worker
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: app
+          image: ghcr.io/example/notification-worker:1.0.0
+
+          envFrom:
+            - configMapRef:
+                name: kafka-client-config
+
+          env:
+            - name: KAFKA_CONSUMER_GROUP
+              value: notification-worker
+
+# ВАЖНО:
+# 9 consumer Pods при 6 partitions не дадут 9-way parallelism:
+# часть consumers будет idle.
+#
+# Consumer liveness НЕ должна падать только из-за временной Kafka outage.
