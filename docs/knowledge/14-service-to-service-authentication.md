@@ -51,6 +51,38 @@ TLS failure -> transport trust
 
 Практика: [Showcase 06](../../showcases/06-service-to-service-security/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Фиксирует identity model: кто является caller — пользователь, сервис или оба контекста — и какие scopes/roles/audience нужны.
+
+### Разработчик
+
+Разделяет network access, TLS/mTLS, token acquisition, JWT validation и business authorization.
+
+### Тестировщик
+
+Проверяет матрицу:
+- no token;
+- invalid token;
+- wrong audience;
+- expired token;
+- valid identity without permission;
+- network deny;
+- TLS trust failure.
+
+### Перед следующей главой
+
+Вы должны уметь по симптому отличить:
+
+```text
+timeout
+TLS error
+401
+403
+```
+
 Проверено: 2026-09-20.
 
 Network reachability и identity — разные задачи. Если Pod может открыть TCP connection к другому Pod, это ещё не означает, что ему можно доверять.
