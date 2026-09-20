@@ -50,6 +50,38 @@ headless Service -> individual Pod DNS/IPs
 
 Практика: [Internal REST](../../showcases/01-internal-rest-service/README.md) и [StatefulSet/headless](../../showcases/18-statefulset-headless-service/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Использует logical service names в архитектурных схемах и явно отмечает namespace/cross-namespace contracts.
+
+### Разработчик
+
+Переходит от Eureka-instance thinking к Service/DNS/EndpointSlice, где это достаточно, и понимает headless Service как отдельный случай.
+
+### Тестировщик
+
+Проверяет:
+- DNS names;
+- namespace resolution;
+- selector mismatch;
+- no ready endpoints;
+- headless individual identities.
+
+### Перед следующей главой
+
+Нужно различать:
+
+```text
+service discovery
+load balancing
+authentication
+authorization
+```
+
+Они могут идти в одной request chain, но решают разные задачи.
+
 Проверено: 2026-09-20.
 
 Цель главы — понять, как микросервисы находят друг друга в Kubernetes и почему привычные Eureka/IP-based подходы часто становятся не нужны внутри cluster.
