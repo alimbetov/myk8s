@@ -1,5 +1,68 @@
 # Manifest Reference — Deployment
 
+## Учебная схема объекта
+
+### Где Deployment находится в системе
+
+```text
+Deployment
+    |
+    v
+ReplicaSet
+    |
+    +--> Pod
+    +--> Pod
+    +--> Pod
+           |
+           v
+       Spring Boot
+```
+
+Deployment не обслуживает network traffic. Он управляет **desired count и rollout Pod template**.
+
+### Минимальный annotated manifest
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+
+spec:
+  replicas: 3                 # сколько Pod хотим постоянно иметь
+
+  selector:
+    matchLabels:
+      app: orders             # должен совпасть с template labels
+
+  template:
+    metadata:
+      labels:
+        app: orders           # Service тоже обычно выбирает этот label
+
+    spec:
+      containers:
+        - name: app
+          image: registry/orders:1.0.0
+
+          ports:
+            - name: http
+              containerPort: 8080
+```
+
+### Что произойдёт runtime
+
+```text
+apply Deployment
+ -> controller creates ReplicaSet
+ -> ReplicaSet creates Pods
+ -> scheduler assigns nodes
+ -> kubelet starts containers
+ -> probes decide readiness
+```
+
+Полный пример: [Showcase 01 annotated Deployment](../../../showcases/01-internal-rest-service/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
