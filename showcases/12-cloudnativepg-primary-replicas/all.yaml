@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Requires CloudNativePG operator/CRDs.
+# IMPORTANT:
+# - Applications connect through orders-db-rw / orders-db-ro logical Services.
+# - Do not hardcode the current primary Pod.
+# - Replication is NOT backup; production needs backup/PITR/restore tests.
+
 apiVersion: v1
 kind: Secret
 metadata:
