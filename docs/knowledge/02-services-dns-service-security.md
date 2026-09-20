@@ -1,5 +1,62 @@
 # 02 — Services, DNS and service-to-service security
 
+## Учебная карта темы
+
+### Где Service находится в request flow
+
+```text
+orders-api Pod
+    |
+    | http://customer-api:8080
+    v
+Cluster DNS
+    |
+    v
+Service customer-api
+    |
+    v
+EndpointSlice
+    |
+    +--> Ready Pod A
+    +--> Ready Pod B
+```
+
+Service — это **stable network identity**, а не application server и не security mechanism.
+
+### Главный mapping
+
+```yaml
+# Service
+spec:
+  selector:
+    app: customer-api       # выбирает Pods по label
+  ports:
+    - port: 8080            # порт, который видит caller
+      targetPort: http      # named container port
+```
+
+```text
+Service.selector
+      =
+Pod labels
+
+Service.targetPort=http
+      =
+containerPort.name=http
+```
+
+### Не путать слои
+
+```text
+Service       -> куда отправить
+NetworkPolicy -> можно ли отправить
+TLS/mTLS      -> защищён ли transport / кто peer
+JWT/OAuth2    -> кто caller
+Authorization -> что caller может делать
+```
+
+Практика: [Showcase 06 — service-to-service security](../../showcases/06-service-to-service-security/README.md).
+
 Проверено: 2026-09-20.
 
 Эта глава объясняет, **как один Spring Boot service находит другой**, почему Pod IP нельзя считать адресом сервиса и почему NetworkPolicy, TLS и JWT решают разные задачи.
