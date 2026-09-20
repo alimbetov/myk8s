@@ -1,5 +1,12 @@
 # Showcase 01 — Internal Spring Boot REST service
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Spring Boot configuration](application.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 ## Цель
 
 Базовая production-like схема внутреннего Spring Boot API, который доступен только внутри cluster.
