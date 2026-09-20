@@ -1,5 +1,64 @@
 # 18 — Ingress, Gateway API and TLS
 
+## Учебная карта темы
+
+### Edge routing в общей системе
+
+```text
+Internet
+   |
+   v
+Load Balancer / data plane
+   |
+   v
+Ingress or Gateway
+   |
+   v
+Service
+   |
+   v
+Ready Pods
+```
+
+### Ingress vs Gateway API
+
+```text
+Ingress
+  -> simple HTTP routing API
+  -> controller-specific annotations common
+
+Gateway API
+  -> GatewayClass
+  -> Gateway
+  -> HTTPRoute
+  -> clearer role separation
+  -> richer routing model
+```
+
+### TLS termination
+
+```text
+Client HTTPS
+   ↓
+edge certificate
+   ↓
+TLS termination
+   ↓
+backend Service
+```
+
+### Annotated mapping
+
+```yaml
+backend:
+  service:
+    name: orders-api   # Service.metadata.name
+    port:
+      name: http       # Service port name, not containerPort directly
+```
+
+Практика: [Ingress + TLS](../../showcases/02-public-api-ingress-tls/README.md) и [Gateway API](../../showcases/07-gateway-microservices/README.md).
+
 Проверено: 2026-09-20.
 
 Эта глава про входящий traffic извне cluster и границу между application routing и platform ingress infrastructure.
