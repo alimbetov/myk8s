@@ -1,5 +1,59 @@
 # 03 — Deployments, probes, resources and rollouts
 
+## Учебная карта темы
+
+### Deployment в общей системе
+
+```text
+Deployment
+    |
+    v
+ReplicaSet
+    |
+    +--> Pod v1
+    +--> Pod v1
+    +--> Pod v1
+
+spec.template changes
+    |
+    v
+new ReplicaSet
+    |
+    +--> Pod v2
+```
+
+Deployment отвечает за **desired replica state и rollout**, а readiness решает, когда новый Pod можно считать usable.
+
+### Rollout + probes
+
+```text
+new Pod starts
+   ↓
+startupProbe passes
+   ↓
+liveness begins to matter
+   ↓
+readiness passes
+   ↓
+Pod enters Service endpoints
+   ↓
+old Pod can be scaled down
+```
+
+### Annotated fragment
+
+```yaml
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0   # не теряем available replicas
+    maxSurge: 1         # разрешаем один временный extra Pod
+```
+
+> **Production:** rollout приложения не равен rollback database schema. Для mixed-version rollout нужна backward-compatible schema.
+
+Смотрите [Blue/Green](../../showcases/08-blue-green/README.md) и [Canary](../../showcases/09-canary/README.md).
+
 Проверено: 2026-09-20.
 
 Этот раздел объясняет не только **что написать в Deployment**, но и **какой процесс запускает каждое поле, почему оно существует и что в этот момент происходит со Spring Boot приложением**.
