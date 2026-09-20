@@ -1,0 +1,151 @@
+# ============================================================
+# SHOWCASE 02 — PUBLIC API THROUGH INGRESS + TLS
+# ============================================================
+#
+# Internet
+#   |
+#   | HTTPS api.example.kz
+#   v
+# Ingress Controller
+#   |
+#   v
+# Ingress orders-api
+#   |
+#   v
+# Service orders-api:8080
+#   |
+#   v
+# Ready Pods
+#
+# ВАЖНО:
+# - Ingress object сам traffic не проксирует.
+# - Нужен Ingress Controller.
+# - Backend Service обычно остаётся ClusterIP.
+# ============================================================
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-example-tls
+
+# Стандартный Secret type для TLS.
+type: kubernetes.io/tls
+stringData:
+  # Production certificate должен соответствовать hostname.
+  tls.crt: |
+    REPLACE_WITH_CERTIFICATE
+  tls.key: |
+    REPLACE_WITH_PRIVATE_KEY
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 3
+
+  # Pod должен быть Ready 10 секунд,
+  # прежде чем Deployment считает его Available.
+  minReadySeconds: 10
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # Не уменьшаем available capacity во время rollout.
+      maxUnavailable: 0
+      # Разрешаем один дополнительный Pod.
+      maxSurge: 1
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: orders-api
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: orders-api
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+          env:
+            # Spring должен корректно учитывать Forwarded headers,
+            # если TLS завершается на reverse proxy.
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: framework
+
+            - name: SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE
+              value: 20s
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: http
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+spec:
+  # ВАЖНО:
+  # Service internal. Public endpoint создаёт Ingress/controller.
+  type: ClusterIP
+
+  selector:
+    app.kubernetes.io/name: orders-api
+
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-api
+spec:
+  # PLATFORM-SPECIFIC:
+  # имя должно совпадать с установленным IngressClass.
+  ingressClassName: traefik
+
+  tls:
+    - hosts:
+        - api.example.kz
+      # Exact reference на TLS Secret.
+      secretName: api-example-tls
+
+  rules:
+    - host: api.example.kz
+      http:
+        paths:
+          - path: /orders
+            # Prefix: /orders и /orders/123.
+            pathType: Prefix
+
+            backend:
+              service:
+                # Exact reference на Service metadata.name.
+                name: orders-api
+                port:
+                  # Exact reference на Service port name.
+                  name: http
