@@ -533,6 +533,14 @@ Must know:
 
 ---
 
+## Production-like examples
+
+- [initContainer + main Pod composition](../../../showcases/16-initcontainer-main/README.md)
+- [Native sidecar Pod](../../../showcases/17-native-sidecar/README.md)
+- [Stateful Pod identity](../../../showcases/18-statefulset-headless-service/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/pods/
