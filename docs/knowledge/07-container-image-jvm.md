@@ -1,5 +1,66 @@
 # 07 — Container image + JVM in Kubernetes
 
+## Учебная карта темы
+
+### Где container image находится в общей цепочке
+
+```text
+Source code
+   ↓
+Maven/Gradle
+   ↓
+JAR
+   ↓
+Container image
+   ↓
+Registry
+   ↓
+Kubernetes Pod
+   ↓
+JVM process
+   ↓
+Spring Boot
+```
+
+Container image — это **immutable runtime package**: JRE + application + startup contract.
+
+### Что Kubernetes реально делает
+
+```text
+Deployment references image
+   ↓
+Scheduler chooses node
+   ↓
+kubelet asks runtime to pull image
+   ↓
+layers unpack
+   ↓
+container process starts
+   ↓
+PID 1 receives signals
+```
+
+### Annotated fragment
+
+```yaml
+containers:
+  - name: app
+    image: registry.example/orders:1.7.3
+
+    # Production:
+    # используйте immutable version/digest,
+    # не latest как release contract.
+    imagePullPolicy: IfNotPresent
+
+    securityContext:
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+```
+
+> **Связь со Spring Boot:** image должен корректно передавать SIGTERM JVM, иметь CA certificates/timezone/locale requirements и не зависеть от writable root filesystem без причины.
+
+Практика: [Showcase 01 annotated.yaml](../../showcases/01-internal-rest-service/annotated.yaml).
+
 Проверено: 2026-09-20.
 
 Цель главы — понять, что именно Kubernetes запускает, как Spring Boot превращается в OCI image, почему Pod нельзя воспринимать как маленькую VM и какие решения в image напрямую влияют на graceful shutdown, security, startup и эксплуатацию.
