@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Read: README.md -> WALKTHROUGH.md before applying.
+# IMPORTANT:
+# - GatewayClass is platform-specific; replace the placeholder with an installed class.
+# - HTTPRoute backendRefs point to Service ports, never directly to Pod IPs.
+# - Production normally adds HTTPS, authentication, policy and observability.
+
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
