@@ -58,6 +58,30 @@ metrics:
 
 Практика: [Showcase 03](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Фиксирует scaling signal и ограничения: что именно означает “нагрузка”, какой max capacity допустим downstream.
+
+### Разработчик
+
+Настраивает requests, metric semantics и scale behavior. Не рассматривает HPA как бесплатный бесконечный scale.
+
+### Тестировщик
+
+Проверяет:
+- metric unavailable;
+- missing requests;
+- scale up;
+- maxReplicas reached;
+- scale down stabilization;
+- downstream saturation.
+
+### Перед следующей главой
+
+Нужно видеть HPA как feedback control loop, а не как кнопку “добавить Pods”.
+
 Проверено: 2026-09-20.
 
 Autoscaling — не «если CPU высокий, добавь Pods». Это feedback loop, который должен учитывать requests, startup time, downstream capacity и scale-down safety.
