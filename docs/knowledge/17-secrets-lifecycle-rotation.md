@@ -66,6 +66,48 @@ volumes:
 
 Практика: [Secret configtree](../../showcases/15-secret-configtree/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Фиксирует ownership и lifecycle каждого credential:
+- кто выдаёт;
+- срок жизни;
+- как обновляется;
+- есть ли overlap window;
+- кто и как отзывает старый.
+
+### Разработчик
+
+Выбирает delivery method, не логирует secret и понимает reload semantics клиента/пула.
+
+### Тестировщик
+
+Проверяет:
+- missing/invalid secret;
+- rotation with overlap;
+- revoked old credential;
+- expired certificate/token;
+- отсутствие sensitive values в logs/events.
+
+### Перед следующей главой
+
+Вы должны понимать:
+
+```text
+Secret object
+ !=
+secret lifecycle
+
+delivery
+ !=
+reload
+
+rotation
+ !=
+revocation
+```
+
 Проверено: 2026-09-20.
 
 Secret — не YAML type, а lifecycle: creation, delivery, use, rotation, revocation, audit and recovery.
