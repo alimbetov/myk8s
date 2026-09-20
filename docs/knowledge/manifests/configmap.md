@@ -1,5 +1,51 @@
 # Manifest Reference — ConfigMap
 
+## Учебная схема объекта
+
+### Роль ConfigMap
+
+```text
+ConfigMap
+   |
+   +--> env/envFrom
+   |
+   +--> mounted files
+   |
+   v
+Spring Environment
+   |
+   v
+@ConfigurationProperties
+```
+
+ConfigMap хранит **non-secret configuration**, а не application state.
+
+### Annotated fragment
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config
+
+data:
+  # Значения здесь строки.
+  CUSTOMER_API_URL: http://customer-api:8080
+  DB_POOL_SIZE: "10"
+```
+
+Pod:
+
+```yaml
+envFrom:
+  - configMapRef:
+      name: orders-config   # exact object reference
+```
+
+> env-based configuration фиксируется при старте container. Изменение ConfigMap не меняет env работающей JVM.
+
+Практика: [mounted application.yaml](../../../showcases/14-configmap-mounted-application-yaml/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
