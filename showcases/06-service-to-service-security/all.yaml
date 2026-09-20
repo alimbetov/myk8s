@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Demonstrates service discovery + NetworkPolicy as separate layers from OAuth2/JWT.
+# IMPORTANT:
+# - NetworkPolicy controls reachability, not cryptographic identity.
+# - DNS/Service routing can work while application authentication still returns 401/403.
+# - Labels are network selectors, not trusted workload credentials by themselves.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
