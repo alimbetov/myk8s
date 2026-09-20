@@ -1,0 +1,90 @@
+# ============================================================
+# SHOWCASE 15 — SECRET AS SPRING BOOT CONFIGTREE
+# ============================================================
+#
+# Secret keys
+#   spring.datasource.username
+#   spring.datasource.password
+#          |
+#          v
+# files under /etc/secrets
+#          |
+#          v
+# configtree:/etc/secrets/
+#          |
+#          v
+# Spring Environment
+# ============================================================
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-db-configtree
+type: Opaque
+
+stringData:
+  # FILE NAME will become Spring property name.
+  spring.datasource.username: orders_app
+  spring.datasource.password: replace-at-deploy-time
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-db-nonsecret
+data:
+  # Endpoint itself is not secret.
+  SPRING_DATASOURCE_URL: jdbc:postgresql://orders-db-rw:5432/orders
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: orders-api
+
+  template:
+    metadata:
+      labels:
+        app: orders-api
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-db-nonsecret
+                  key: SPRING_DATASOURCE_URL
+
+            # Spring imports every file in directory as property.
+            - name: SPRING_CONFIG_IMPORT
+              value: configtree:/etc/secrets/
+
+          volumeMounts:
+            - name: db-secret
+              mountPath: /etc/secrets
+              readOnly: true
+
+      volumes:
+        - name: db-secret
+          secret:
+            # Exact reference on Secret.
+            secretName: orders-db-configtree
+
+# ADVANTAGE:
+# password is not injected as process environment variable.
+#
+# BUT:
+# Secret file update != automatic Hikari credential reload.
+#
+# Rotation still requires coordinated:
+# new credential -> Secret update -> rollout/reload -> verify -> revoke old.
