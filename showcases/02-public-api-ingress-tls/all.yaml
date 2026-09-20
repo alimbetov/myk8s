@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Public API through Ingress + TLS, while backend Service remains ClusterIP.
+# IMPORTANT:
+# - ingressClassName must match the installed controller.
+# - TLS Secret/certificate must match the hostname.
+# - Ingress backend points to a Service, not directly to Pods.
+
 apiVersion: v1
 kind: Secret
 metadata:
