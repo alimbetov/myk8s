@@ -1,5 +1,11 @@
 # Showcase 18 — StatefulSet + Headless Service
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 Проверено: 2026-09-20.
 
 ## Схема
