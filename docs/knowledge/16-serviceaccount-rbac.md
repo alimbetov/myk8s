@@ -1,5 +1,55 @@
 # 16 — ServiceAccount and RBAC
 
+## Учебная карта темы
+
+### Кто вызывает Kubernetes API
+
+```text
+Spring Pod
+   |
+   | ServiceAccount token
+   v
+Kubernetes API Server
+   |
+   v
+RBAC authorization
+   |
+   +--> allow
+   └--> 403 Forbidden
+```
+
+Это **не** service-to-service authentication вашего business API.
+
+### Mapping
+
+```text
+Pod.spec.serviceAccountName
+       ↓
+ServiceAccount
+       ↓
+RoleBinding.subject
+       ↓
+Role / ClusterRole rules
+```
+
+### Annotated fragment
+
+```yaml
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["orders-runtime"]
+    verbs: ["get"]       # только нужная операция
+```
+
+Если приложению Kubernetes API вообще не нужен:
+
+```yaml
+automountServiceAccountToken: false
+```
+
+> Не давайте `get/list/watch secrets` только потому, что Pod использует Secret injection.
+
 Проверено: 2026-09-20.
 
 ServiceAccount и RBAC нужны, когда workload взаимодействует с Kubernetes API. Обычному Spring Boot API это часто вообще не требуется.
