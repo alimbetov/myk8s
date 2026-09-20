@@ -366,6 +366,13 @@ Must know:
 
 ---
 
+## Production-like examples
+
+- [Secret as DB env configuration](../../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+- [Secret as configtree](../../../showcases/15-secret-configtree/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/configuration/secret/
