@@ -1,5 +1,55 @@
 # 19 — Deployment strategies
 
+## Учебная карта темы
+
+### Deployment strategy — это управление двумя версиями
+
+```text
+OLD VERSION
+    |
+    | coexistence / replacement rules
+    v
+NEW VERSION
+```
+
+Основные модели:
+
+```text
+Recreate
+ old off -> new on
+
+RollingUpdate
+ old and new overlap automatically
+
+Blue/Green
+ two full slots + explicit switch
+
+Canary
+ old + new + partial traffic
+```
+
+### Что определяет выбор
+
+```text
+downtime tolerance
+capacity
+DB compatibility
+traffic control
+rollback needs
+observability maturity
+```
+
+### Критический invariant
+
+Если v1 и v2 работают одновременно:
+
+```text
+DB schema / events / cache / APIs
+must be mixed-version compatible
+```
+
+Практика: [Blue/Green](../../showcases/08-blue-green/README.md), [Canary](../../showcases/09-canary/README.md).
+
 Проверено: 2026-09-20.
 
 Цель главы — понять, как доставлять новую версию Spring Boot приложения без ненужного downtime и как выбирать между RollingUpdate, Recreate, blue/green и canary.
