@@ -1,5 +1,11 @@
 # Showcase 05 — File-processing worker with PVC
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 ## Схема
 
 ```text
