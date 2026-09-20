@@ -1,5 +1,52 @@
 # Manifest Reference — Pod
 
+## Учебная схема объекта
+
+### Pod — граница совместного lifecycle
+
+```text
+Pod
+├── app container
+├── sidecar
+├── initContainers
+├── shared network namespace
+└── shared volumes
+```
+
+Pod — не “маленькая VM”. Это **оболочка над одним или несколькими тесно связанными containers**, которые вместе scheduled/replaced.
+
+### Annotated fragment
+
+```yaml
+spec:
+  initContainers:
+    - name: prepare
+      image: busybox:1.36      # выполняется до main containers
+
+  containers:
+    - name: app
+      image: registry/app:1.0
+      ports:
+        - name: http
+          containerPort: 8080
+
+  terminationGracePeriodSeconds: 30
+```
+
+### Lifecycle
+
+```text
+Scheduled
+ -> init
+ -> containers start
+ -> Running
+ -> Ready
+ -> termination
+ -> replacement
+```
+
+Практика: [initContainer](../../../showcases/16-initcontainer-main/annotated.yaml), [native sidecar](../../../showcases/17-native-sidecar/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
