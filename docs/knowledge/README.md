@@ -52,6 +52,13 @@
 22. [21 — Jobs / CronJobs / Spring Batch](21-jobs-cronjobs-spring-batch.md)
 23. [22 — Observability](22-observability.md)
 
+## Kubernetes manifest reference
+
+- [Manifest coverage matrix](manifests/README.md)
+- [Service — полный разбор manifest](manifests/service.md)
+
+Этот раздел отвечает именно на вопрос **«что означает каждое поле YAML, какой у него default, runtime effect и как его диагностировать»**. Тематические главы объясняют архитектуру; manifest reference — конкретный Kubernetes API object построчно.
+
 ## Практика
 
 - [Lab 01 — Spring Boot Kubernetes baseline](../../labs/01-spring-boot-baseline/README.md)
