@@ -12,6 +12,20 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+                 Service
+                    |
+          selector chooses slot
+              /           \
+             v             v
+          BLUE           GREEN
+        Deployment     Deployment
+```
+
+Blue/Green — это не отдельный Kubernetes kind. Это **композиция двух workloads и механизма переключения traffic**.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
