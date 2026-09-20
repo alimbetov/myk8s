@@ -229,6 +229,14 @@ Gateway API особенно полезен, когда нужны:
 
 Ingress basics входят в application networking practice. Gateway API может зависеть от актуальной экзаменационной curriculum/version; production нужно знать оба подхода.
 
+## Связанные production-like примеры
+
+- [Ingress + TLS](../../showcases/02-public-api-ingress-tls/README.md)
+- [Gateway API + several microservices](../../showcases/07-gateway-microservices/README.md)
+- [Weighted HTTPRoute canary](../../showcases/09-canary/README.md)
+
+Для каждого стенда откройте `README.md` → `WALKTHROUGH.md` → `all.yaml`.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/services-networking/ingress/
