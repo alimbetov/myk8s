@@ -1,0 +1,120 @@
+# ============================================================
+# SHOWCASE 18 — STATEFULSET + HEADLESS SERVICE
+# ============================================================
+#
+# Headless Service cluster-member
+#      |
+#      +--> cluster-member-0.cluster-member
+#      +--> cluster-member-1.cluster-member
+#      +--> cluster-member-2.cluster-member
+#
+# Each ordinal gets separate PVC:
+#
+# cluster-member-0 -> data-cluster-member-0
+# cluster-member-1 -> data-cluster-member-1
+# cluster-member-2 -> data-cluster-member-2
+#
+# StatefulSet gives identity/storage/order.
+# It does NOT give replication/quorum/failover/backup.
+# ============================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cluster-member
+spec:
+  # Headless Service:
+  # no normal virtual ClusterIP load balancing.
+  clusterIP: None
+
+  selector:
+    app: cluster-member
+
+  ports:
+    - name: peer
+      port: 9000
+      targetPort: peer
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cluster-member
+spec:
+  # Governing Service for stable network identity.
+  # Must match headless Service metadata.name above.
+  serviceName: cluster-member
+
+  replicas: 3
+
+  # Default is OrderedReady.
+  # Pod 0 -> Ready -> Pod 1 -> Ready -> Pod 2.
+  podManagementPolicy: OrderedReady
+
+  selector:
+    matchLabels:
+      app: cluster-member
+
+  template:
+    metadata:
+      labels:
+        app: cluster-member
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: member
+          image: ghcr.io/example/cluster-member:1.0.0
+
+          ports:
+            - name: peer
+              containerPort: 9000
+
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+          volumeMounts:
+            - name: data
+              # volumeMount.name must match
+              # volumeClaimTemplates.metadata.name.
+              mountPath: /var/lib/member
+
+          readinessProbe:
+            tcpSocket:
+              port: peer
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+
+  volumeClaimTemplates:
+    - metadata:
+        # Each ordinal gets its own PVC based on this name.
+        name: data
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 5Gi
+
+# RUNTIME:
+#
+# delete cluster-member-1
+#   ↓
+# StatefulSet creates cluster-member-1 again
+#   ↓
+# same ordinal identity
+#   ↓
+# corresponding persistent claim remains associated
+#
+# ОСТОРОЖНО:
+# This is NOT a production database cluster by itself.
