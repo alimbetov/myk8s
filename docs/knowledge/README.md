@@ -59,6 +59,13 @@
 
 Этот раздел отвечает именно на вопрос **«что означает каждое поле YAML, какой у него default, runtime effect и как его диагностировать»**. Тематические главы объясняют архитектуру; manifest reference — конкретный Kubernetes API object построчно.
 
+## Ознакомительные architecture showcases
+
+- [Showcase catalog](../../showcases/README.md)
+- [Manifest mapping cheat sheet](../../showcases/MAPPING-CHEATSHEET.md)
+
+Эти стенды показывают совместную работу нескольких manifests на одном service scenario: mapping labels/selectors/ports/config/secrets, runtime traffic, autoscaling, storage и security boundaries.
+
 ## Практика
 
 - [Lab 01 — Spring Boot Kubernetes baseline](../../labs/01-spring-boot-baseline/README.md)
