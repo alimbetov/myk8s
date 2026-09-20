@@ -1,5 +1,75 @@
 # Manifest Reference — PersistentVolumeClaim
 
+## Учебная схема объекта
+
+### Где PVC находится в storage chain
+
+```text
+Pod
+ |
+ | volumeMount
+ v
+Volume
+ |
+ | claimName
+ v
+PVC
+ |
+ v
+PV
+ |
+ v
+StorageClass / CSI
+ |
+ v
+physical storage
+```
+
+### Annotated fragment
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: work-data
+
+spec:
+  accessModes:
+    - ReadWriteOncePod   # strict single-Pod writer, if CSI supports
+
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+Pod:
+
+```yaml
+volumes:
+  - name: work
+    persistentVolumeClaim:
+      claimName: work-data
+
+containers:
+  - volumeMounts:
+      - name: work
+        mountPath: /data/work
+```
+
+### Не путать
+
+```text
+PVC persistence
+ !=
+backup
+
+ReadWriteOnce
+ !=
+strict single Pod
+```
+
+Практика: [PVC worker](../../../showcases/05-file-worker-pvc/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
