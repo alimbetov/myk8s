@@ -1,0 +1,17 @@
+# Write workload
+spring:
+  datasource:
+    url: jdbc:postgresql://orders-db-rw:5432/orders
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 3000
+
+---
+# Read-only reporting workload example
+spring:
+  datasource:
+    url: jdbc:postgresql://orders-db-ro:5432/orders
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
