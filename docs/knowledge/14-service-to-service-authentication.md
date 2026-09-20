@@ -1,5 +1,56 @@
 # 14 — Service-to-service authentication
 
+## Учебная карта темы
+
+### Где authentication находится в internal call
+
+```text
+orders-api
+   |
+   | 1 DNS / Service
+   | 2 NetworkPolicy
+   | 3 TLS/mTLS
+   | 4 OAuth2/JWT
+   v
+payment-api
+   |
+   v
+Authorization
+```
+
+Каждый слой отвечает на другой вопрос:
+
+```text
+NetworkPolicy -> может ли packet дойти?
+TLS           -> защищён ли transport?
+mTLS          -> какая workload identity?
+JWT           -> какой application/user principal?
+Authorization -> разрешено ли действие?
+```
+
+### Spring Resource Server fragment
+
+```yaml
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OIDC_ISSUER_URI}
+```
+
+### Ошибки по слоям
+
+```text
+UnknownHost -> DNS
+timeout     -> network
+TLS failure -> transport trust
+401         -> authentication
+403         -> authorization
+```
+
+Практика: [Showcase 06](../../showcases/06-service-to-service-security/README.md).
+
 Проверено: 2026-09-20.
 
 Network reachability и identity — разные задачи. Если Pod может открыть TCP connection к другому Pod, это ещё не означает, что ему можно доверять.
