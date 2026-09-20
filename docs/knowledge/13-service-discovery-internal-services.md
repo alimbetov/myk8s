@@ -1,5 +1,55 @@
 # 13 — Service discovery and internal services
 
+## Учебная карта темы
+
+### Service discovery без Eureka
+
+```text
+Spring client
+   |
+   | customer-api
+   v
+cluster DNS
+   |
+   v
+Service
+   |
+   v
+EndpointSlice
+   |
+   v
+Ready Pods
+```
+
+В Kubernetes для типичного internal HTTP сервиса:
+
+```text
+Eureka instance registry
+        ↓
+заменяется во многом на
+        ↓
+Service + DNS + EndpointSlice
+```
+
+Это не значит, что Service Mesh/API registry никогда не нужны, но базовый location discovery уже встроен.
+
+### DNS scopes
+
+```text
+customer-api
+customer-api.crm
+customer-api.crm.svc.cluster.local
+```
+
+### Headless exception
+
+```text
+normal Service -> virtual service identity
+headless Service -> individual Pod DNS/IPs
+```
+
+Практика: [Internal REST](../../showcases/01-internal-rest-service/README.md) и [StatefulSet/headless](../../showcases/18-statefulset-headless-service/README.md).
+
 Проверено: 2026-09-20.
 
 Цель главы — понять, как микросервисы находят друг друга в Kubernetes и почему привычные Eureka/IP-based подходы часто становятся не нужны внутри cluster.
