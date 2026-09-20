@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# StatefulSet + headless Service demonstrates stable ordinal identity and per-Pod storage.
+# IMPORTANT:
+# - serviceName must match the governing headless Service.
+# - volumeClaimTemplates create separate claims per ordinal.
+# - StatefulSet does NOT provide database replication, quorum, failover or backup.
+
 apiVersion: v1
 kind: Service
 metadata:
