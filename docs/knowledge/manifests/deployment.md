@@ -680,6 +680,14 @@ kubectl rollout undo deployment/orders
 
 ---
 
+## Production-like examples
+
+- [Deployment in internal REST service](../../../showcases/01-internal-rest-service/README.md)
+- [Two Deployments in blue/green](../../../showcases/08-blue-green/README.md)
+- [Stable + canary Deployments](../../../showcases/09-canary/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
