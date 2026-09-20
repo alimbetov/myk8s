@@ -50,6 +50,38 @@ must be mixed-version compatible
 
 Практика: [Blue/Green](../../showcases/08-blue-green/README.md), [Canary](../../showcases/09-canary/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Связывает release strategy с риском, downtime tolerance, capacity cost и совместимостью данных.
+
+### Разработчик
+
+Готовит приложение к coexistence версий: backward-compatible DB/events/cache/API contracts.
+
+### Тестировщик
+
+Проверяет:
+- rollout/cutover;
+- mixed-version period;
+- rollback;
+- bad canary;
+- business smoke tests;
+- state compatibility after rollback.
+
+### Перед следующей главой
+
+Нужно уметь объяснить, почему:
+
+```text
+application rollback
+ !=
+database rollback
+ !=
+event rollback
+```
+
 Проверено: 2026-09-20.
 
 Цель главы — понять, как доставлять новую версию Spring Boot приложения без ненужного downtime и как выбирать между RollingUpdate, Recreate, blue/green и canary.
