@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Weighted canary routing is implemented at HTTPRoute, not by replica ratio.
+# IMPORTANT:
+# - version labels keep stable/canary backends separate.
+# - A compatible Gateway named public-api is required.
+# - Observe metrics by version before increasing canary weight.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
