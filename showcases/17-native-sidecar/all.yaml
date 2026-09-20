@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Native sidecar uses initContainers[].restartPolicy=Always.
+# IMPORTANT:
+# - Sidecar and app share Pod network namespace, so localhost works between them.
+# - Sidecar consumes real CPU/memory and participates in workload failure/lifecycle.
+# - Use a sidecar only when both processes should scale/deploy as one workload unit.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
