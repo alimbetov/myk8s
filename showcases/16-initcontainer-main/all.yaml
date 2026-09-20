@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# initContainer prepares derived runtime config in a shared emptyDir before Spring Boot starts.
+# IMPORTANT:
+# - Main container never starts until ordinary initContainers succeed.
+# - emptyDir is Pod-lifetime storage; replacement runs initialization again.
+# - Do not turn initContainers into infinite dependency wait loops.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
