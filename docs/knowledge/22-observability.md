@@ -310,6 +310,14 @@ CKAD: logs, probes, resource visibility/basic troubleshooting. Production: metri
 - runbooks linked;
 - SLO defined for critical services.
 
+## Связанные production-like примеры
+
+- [Telemetry sidecar](../../showcases/17-native-sidecar/README.md)
+- [Kafka lag and product metrics](../../showcases/10-kafka-producer-consumer/README.md)
+- [Queue depth and broker alarms](../../showcases/11-rabbitmq-worker/README.md)
+
+Для каждого стенда откройте `README.md` → `WALKTHROUGH.md` → `all.yaml`.
+
 ## Sources
 
 - https://docs.spring.io/spring-boot/reference/actuator/
