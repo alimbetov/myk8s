@@ -1,0 +1,104 @@
+# ============================================================
+# SHOWCASE 14 — CONFIGMAP AS MOUNTED application.yaml
+# ============================================================
+#
+# ConfigMap.data["application.yaml"]
+#       |
+#       v
+# volume projection
+#       |
+#       v
+# /etc/spring/application.yaml
+#       |
+#       v
+# SPRING_CONFIG_ADDITIONAL_LOCATION
+#       |
+#       v
+# Spring Boot Environment
+#
+# ВАЖНО:
+# file update by Kubernetes != automatic Spring context reload.
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # Versioned name makes config change explicit.
+  name: orders-application-config-v1
+
+# Immutable ConfigMap:
+# content cannot be changed in-place.
+# New version -> new ConfigMap -> Deployment rollout.
+immutable: true
+
+data:
+  # Key becomes a file name in mounted directory.
+  application.yaml: |
+    management:
+      endpoint:
+        health:
+          probes:
+            enabled: true
+            add-additional-paths: true
+
+    app:
+      customer-api:
+        base-url: http://customer-api:8080
+        connect-timeout: 1s
+        read-timeout: 3s
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: orders-api
+
+  template:
+    metadata:
+      labels:
+        app: orders-api
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          env:
+            # Spring scans this external directory in addition
+            # to normal packaged configuration.
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: file:/etc/spring/
+
+          volumeMounts:
+            - name: application-config
+
+              # ConfigMap files appear here.
+              mountPath: /etc/spring
+              readOnly: true
+
+      volumes:
+        - name: application-config
+
+          configMap:
+            # Exact reference on ConfigMap name.
+            name: orders-application-config-v1
+
+# MAPPING:
+#
+# ConfigMap name
+#     ↓
+# volume.configMap.name
+#
+# volume.name
+#     =
+# volumeMount.name
+#
+# ОСТОРОЖНО:
+# не используйте subPath, если ожидаете projected updates.
