@@ -1,5 +1,52 @@
 # Manifest Reference — Secret
 
+## Учебная схема объекта
+
+### Роль Secret
+
+```text
+credential source
+      |
+      v
+Kubernetes Secret
+   |
+   +--> env
+   +--> volume
+   +--> configtree
+      |
+      v
+Spring Boot client / datasource
+```
+
+Secret — это delivery/storage primitive, а не полный credential lifecycle.
+
+### Annotated fragment
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-db
+
+type: Opaque
+
+stringData:
+  username: orders_app
+  password: replace-at-deploy-time   # не commit real secret
+```
+
+### Важно
+
+```text
+base64 != encryption
+
+Secret updated
+ !=
+JVM credential automatically reloaded
+```
+
+Практика: [Secret configtree](../../../showcases/15-secret-configtree/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
