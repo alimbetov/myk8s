@@ -240,6 +240,14 @@ Root cause находится в application readiness, а не Service object.
 - no unnecessary external ingress;
 - discovery technology has explicit purpose.
 
+## Связанные production-like примеры
+
+- [Service DNS and EndpointSlice](../../showcases/01-internal-rest-service/README.md)
+- [Two internal Spring services](../../showcases/06-service-to-service-security/README.md)
+- [Headless Service and stable Pod DNS](../../showcases/18-statefulset-headless-service/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/services-networking/service/
