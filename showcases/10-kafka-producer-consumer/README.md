@@ -12,6 +12,26 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Spring producer
+      |
+      v
+Kafka bootstrap Service
+      |
+      v
+Strimzi Operator-managed Kafka
+      |
+      v
+Topic / partitions
+      |
+      v
+Spring consumer group
+```
+
+Operator находится **между declarative CR и реальным stateful Kafka cluster**.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
