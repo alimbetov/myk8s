@@ -1,5 +1,52 @@
 # 15 — NetworkPolicy and egress
 
+## Учебная карта темы
+
+### NetworkPolicy вокруг Pod
+
+```text
+                 ingress
+caller --------------------> orders Pod
+                               |
+                               |
+                               +----> PostgreSQL
+                               |
+                               +----> payment-api
+                               |
+                               +----> DNS
+                                  egress
+```
+
+### Default deny меняет модель
+
+Без policies:
+
+```text
+allowed unless platform says otherwise
+```
+
+После deny:
+
+```text
+only explicitly allowed flows
+```
+
+### Annotated fragment
+
+```yaml
+spec:
+  podSelector:
+    matchLabels:
+      app: orders
+  policyTypes:
+    - Egress
+  egress: []          # deny all egress, включая DNS
+```
+
+> **Production:** прежде чем включать deny, составьте dependency inventory: DNS, DB, HTTP APIs, OIDC, telemetry, brokers.
+
+Практика: [Showcase 03](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md).
+
 Проверено: 2026-09-20.
 
 NetworkPolicy нужна не для authentication, а для ограничения network reachability.
