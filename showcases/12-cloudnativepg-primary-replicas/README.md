@@ -12,6 +12,31 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Spring Boot
+   |
+   +--> orders-db-rw
+   |        |
+   |        v
+   |      PRIMARY
+   |
+   +--> orders-db-ro
+            |
+            v
+          REPLICAS
+
+CloudNativePG Operator
+        |
+        +--> role management
+        +--> failover
+        +--> Services
+        +--> PVC-backed instances
+```
+
+Application работает с **logical role Services**, а operator управляет тем, какой Pod сейчас primary.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
