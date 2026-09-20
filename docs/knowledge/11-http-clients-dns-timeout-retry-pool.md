@@ -262,6 +262,13 @@ Client metrics:
 
 CKAD: Service DNS, connectivity, ConfigMap/env, NetworkPolicy. Production: timeout budgets, retries, pools, TLS, observability.
 
+## Связанные production-like примеры
+
+- [orders -> payment internal HTTP call](../../showcases/06-service-to-service-security/README.md)
+- [Gateway + multiple HTTP services](../../showcases/07-gateway-microservices/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://docs.spring.io/spring-boot/reference/io/rest-client.html
