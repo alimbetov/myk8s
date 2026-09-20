@@ -1,5 +1,74 @@
 # Manifest Reference — HorizontalPodAutoscaler
 
+## Учебная схема объекта
+
+### HPA как feedback loop
+
+```text
+metrics
+  |
+  v
+HPA
+  |
+  | desired replicas
+  v
+Deployment
+  |
+  v
+Pods
+  |
+  v
+new metrics
+```
+
+### Annotated fragment
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: orders
+
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: orders
+
+  minReplicas: 3
+  maxReplicas: 20
+
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+```
+
+### Ключевая скрытая связь
+
+```text
+CPU usage
+   /
+Deployment requests.cpu
+   =
+HPA utilization
+```
+
+И ещё:
+
+```text
+maxReplicas
+ ×
+Hikari pool / consumer concurrency
+ =
+downstream pressure
+```
+
+Практика: [HPA + PostgreSQL](../../../showcases/03-rest-postgres-hpa-networkpolicy/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
