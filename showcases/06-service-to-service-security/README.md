@@ -12,6 +12,21 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+orders-api
+   |
+   | Service DNS
+   | NetworkPolicy
+   | TLS/mTLS
+   | OAuth2/JWT
+   v
+payment-api
+```
+
+Этот стенд показывает, что безопасность внутреннего вызова состоит из **нескольких независимых слоёв**. NetworkPolicy не заменяет authentication, а JWT не заменяет network isolation.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
