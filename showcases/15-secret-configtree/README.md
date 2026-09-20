@@ -12,6 +12,26 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Secret
+  |
+  v
+Pod-mounted files
+  |
+  v
+Spring configtree
+  |
+  v
+Spring Environment
+  |
+  v
+DB/client credentials
+```
+
+Configtree — это способ доставки Secret в Spring, а не отдельная система secret management.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
