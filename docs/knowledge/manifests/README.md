@@ -48,16 +48,16 @@
 | Manifest | I1 Structure | I2 Full | I3 Pedagogy | File |
 |---|---:|---:|---:|---|
 | Service | DONE | DONE | PARTIAL | [service.md](service.md) |
-| Deployment | DONE | TODO | TODO | [deployment.md](deployment.md) |
-| Pod | DONE | TODO | TODO | [pod.md](pod.md) |
-| ConfigMap | DONE | TODO | TODO | [configmap.md](configmap.md) |
-| Secret | DONE | TODO | TODO | [secret.md](secret.md) |
-| NetworkPolicy | DONE | TODO | TODO | [networkpolicy.md](networkpolicy.md) |
-| ServiceAccount + RBAC | DONE | TODO | TODO | [serviceaccount-rbac.md](serviceaccount-rbac.md) |
-| PersistentVolumeClaim | DONE | TODO | TODO | [pvc.md](pvc.md) |
-| Job + CronJob | DONE | TODO | TODO | [job-cronjob.md](job-cronjob.md) |
-| HorizontalPodAutoscaler | DONE | TODO | TODO | [hpa.md](hpa.md) |
-| Ingress | DONE | TODO | TODO | [ingress.md](ingress.md) |
+| Deployment | DONE | DONE | TODO | [deployment.md](deployment.md) |
+| Pod | DONE | DONE | TODO | [pod.md](pod.md) |
+| ConfigMap | DONE | DONE | TODO | [configmap.md](configmap.md) |
+| Secret | DONE | DONE | TODO | [secret.md](secret.md) |
+| NetworkPolicy | DONE | DONE | TODO | [networkpolicy.md](networkpolicy.md) |
+| ServiceAccount + RBAC | DONE | DONE | TODO | [serviceaccount-rbac.md](serviceaccount-rbac.md) |
+| PersistentVolumeClaim | DONE | DONE | TODO | [pvc.md](pvc.md) |
+| Job + CronJob | DONE | DONE | TODO | [job-cronjob.md](job-cronjob.md) |
+| HorizontalPodAutoscaler | DONE | DONE | TODO | [hpa.md](hpa.md) |
+| Ingress | DONE | DONE | TODO | [ingress.md](ingress.md) |
 
 ## Iteration 1 status
 
@@ -65,7 +65,15 @@
 
 На этом этапе каждый объект уже имеет отдельную страницу и skeleton полей. Это не означает, что reference завершён: подробная семантика и педагогическая переработка специально отложены на I2/I3, чтобы не смешивать стадии.
 
-## Следующая итерация — I2
+## Iteration 2 status
+
+**Core manifest technical reference is complete for the requested set.**
+
+На I2 для каждого объекта добавлены реальные defaults, field semantics, runtime/update behavior, immutable/mutable ограничения, связи с другими resources, security/Day-2, failure scenarios, troubleshooting и CKAD commands.
+
+Следующая отдельная стадия — **I3 Pedagogical refactor**. В ней технический reference не переписывается заново, а перерабатывается для последовательного обучения: простой язык, схемы, «как было раньше / как сейчас», пошаговые labs и контрольные вопросы.
+
+## Порядок I3
 
 Рекомендуемый порядок полного разбора:
 
@@ -85,7 +93,7 @@
 
 ## Definition of I2 FULL
 
-Manifest получает статус I2 FULL только если присутствуют:
+Технический reference считается I2 FULL, если присутствуют:
 
 - полный minimal example;
 - production-oriented example;
