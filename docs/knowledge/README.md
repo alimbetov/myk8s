@@ -1,5 +1,38 @@
 # Kubernetes Production Knowledge Library
 
+## Как теперь устроен учебник
+
+Каждая основная тема читается в одном направлении:
+
+```text
+общая архитектурная схема
+        ↓
+роль конкретного механизма
+        ↓
+object relationship diagram
+        ↓
+runtime sequence
+        ↓
+annotated example
+        ↓
+technical reference
+        ↓
+production-like showcase
+        ↓
+failure / diagnostics
+```
+
+Для hands-on примеров используйте два YAML-варианта:
+
+- `showcases/*/annotated.yaml` — учебный manifest с комментариями;
+- `showcases/*/all.yaml` — чистый apply-ready manifest.
+
+Так документация одновременно остаётся:
+- учебником;
+- Kubernetes API reference;
+- Spring Boot cookbook;
+- production incident runbook.
+
 Проверено: 2026-09-20.
 
 Эта библиотека — учебник, Spring Boot cookbook, CKAD workbook и production runbook в одном репозитории.
