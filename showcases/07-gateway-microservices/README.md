@@ -12,6 +12,29 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Internet
+   |
+   v
+GatewayClass
+   |
+   v
+Gateway
+   |
+   v
+HTTPRoute   ← application routing contract
+   |
+   v
+Service
+   |
+   v
+Ready Pods
+```
+
+Gateway API находится **перед Service** и делит ответственность между platform и application teams.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
