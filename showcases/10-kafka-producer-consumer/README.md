@@ -1,5 +1,12 @@
 # Showcase 10 — Kafka producer/consumer with Strimzi
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Spring Boot configuration](application.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 Проверено: 2026-09-20.
 
 ## Схема
