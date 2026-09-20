@@ -1,0 +1,109 @@
+# ============================================================
+# SHOWCASE 04 — SPRING BATCH AS CRONJOB
+# ============================================================
+#
+# Cron schedule
+#    ↓
+# CronJob
+#    ↓ creates
+# Job
+#    ↓ creates
+# Pod
+#    ↓
+# Spring Batch process
+#
+# Разделение ответственности:
+# CronJob -> WHEN
+# Job     -> retry/deadline/completion
+# Spring  -> batch semantics/idempotency
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reconciliation-config
+data:
+  SPRING_PROFILES_ACTIVE: batch
+
+  # Business timezone также полезно передать приложению,
+  # даже если CronJob.timeZone уже задан.
+  BUSINESS_TIME_ZONE: Asia/Almaty
+
+  DB_URL: jdbc:postgresql://postgres-rw:5432/billing
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: reconciliation-secret
+type: Opaque
+stringData:
+  DB_USERNAME: batch_app
+  DB_PASSWORD: replace-at-deploy-time
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-reconciliation
+spec:
+  # Каждый день в 02:00.
+  schedule: "0 2 * * *"
+
+  # ВАЖНО:
+  # Явно задаём business timezone.
+  timeZone: Asia/Almaty
+
+  # Если предыдущий scheduled Job ещё работает,
+  # новый scheduled run не запускается.
+  concurrencyPolicy: Forbid
+
+  # Если controller опоздал более чем на 30 минут,
+  # этот missed run можно пропустить.
+  startingDeadlineSeconds: 1800
+
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+  jobTemplate:
+    spec:
+      # Job controller повторит failed attempts максимум
+      # согласно backoff policy.
+      backoffLimit: 2
+
+      # Не даём batch зависнуть бесконечно.
+      activeDeadlineSeconds: 3600
+
+      # Через сутки finished Job можно удалить.
+      # История должна жить в observability/DB, а не вечно в API.
+      ttlSecondsAfterFinished: 86400
+
+      template:
+        metadata:
+          labels:
+            app: daily-reconciliation
+        spec:
+          # Job Pods используют Never/OnFailure,
+          # а не обычную Deployment-модель Always.
+          restartPolicy: Never
+
+          automountServiceAccountToken: false
+
+          containers:
+            - name: batch
+              image: ghcr.io/example/reconciliation:1.0.0
+
+              envFrom:
+                - configMapRef:
+                    name: reconciliation-config
+                - secretRef:
+                    name: reconciliation-secret
+
+              resources:
+                requests:
+                  cpu: 500m
+                  memory: 512Mi
+                limits:
+                  memory: 1Gi
+
+# ВАЖНО:
+# concurrencyPolicy=Forbid НЕ делает business operation idempotent.
+# Retry/manual run всё равно могут повторить side effect.
