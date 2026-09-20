@@ -64,6 +64,35 @@ Retry должен иметь:
 
 Практика: [Service-to-service security](../../showcases/06-service-to-service-security/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Описывает интеграционный contract не только URL/методом, но и timeout, retry eligibility, idempotency, authentication и failure behavior.
+
+### Разработчик
+
+Настраивает finite timeouts, bounded retries, connection pool и observability. Не скрывает outage бесконечными retries.
+
+### Тестировщик
+
+Проверяет отдельно:
+- DNS failure;
+- connect timeout;
+- slow response;
+- pool exhaustion;
+- 5xx;
+- retry amplification;
+- duplicate side effects.
+
+### Перед следующей главой
+
+Вы должны видеть вызов как цепочку:
+
+```text
+DNS -> TCP -> TLS -> pool -> HTTP -> retry/deadline
+```
+
 Проверено: 2026-09-20.
 
 Микросервис часто падает не из-за собственного controller, а из-за неправильного client behavior к другому сервису.
