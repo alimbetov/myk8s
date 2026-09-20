@@ -614,6 +614,34 @@ CKAD проверяет оперативную диагностику primitives
 
 ---
 
+## Связанные failure-стенды
+
+Не читайте этот playbook только теоретически. После каждого класса отказа используйте соответствующий стенд:
+
+- [Internal REST service](../../showcases/01-internal-rest-service/README.md) — selector, targetPort, readiness, Secret;
+- [REST + PostgreSQL + HPA + NetworkPolicy](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md) — DNS/egress, DB auth, pool/HPA;
+- [Service-to-service security](../../showcases/06-service-to-service-security/README.md) — DNS → TCP → JWT → 401/403;
+- [Blue/Green](../../showcases/08-blue-green/README.md) — bad candidate and cutover rollback;
+- [CloudNativePG](../../showcases/12-cloudnativepg-primary-replicas/README.md) — primary loss/failover;
+- [StatefulSet + headless Service](../../showcases/18-statefulset-headless-service/README.md) — Pod/PVC/identity failures.
+
+Практический порядок:
+
+```text
+прочитать symptom
+   ↓
+предсказать слой отказа
+   ↓
+сломать showcase
+   ↓
+собрать evidence
+   ↓
+проверить hypothesis
+   ↓
+исправить
+```
+
+
 ## Sources: для проверки
 
 - https://kubernetes.io/docs/tasks/debug/debug-application/ — application troubleshooting.
