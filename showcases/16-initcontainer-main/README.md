@@ -1,9 +1,22 @@
 # Showcase 16 — initContainer + main Spring Boot container
 
+## Как изучать этот стенд
+
+```text
+1. Сначала посмотрите архитектурную схему ниже
+2. Откройте annotated.yaml и пройдите manifest сверху вниз
+3. Сопоставьте связи в WALKTHROUGH.md
+4. После понимания используйте чистый all.yaml
+5. Затем выполните failure simulations
+```
+
+> **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
-- [Полный связный manifest](all.yaml)
+- [Учебный manifest с подробными комментариями](annotated.yaml)
+- [Чистый apply-ready manifest](all.yaml)
 - [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
 
 Проверено: 2026-09-20.
