@@ -355,6 +355,12 @@ Must know:
 - logs/describe;
 - manual Job from CronJob.
 
+## Production-like examples
+
+- [CronJob -> Job -> Spring Batch](../../../showcases/04-batch-cronjob/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/controllers/job/
