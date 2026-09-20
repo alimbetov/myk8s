@@ -55,6 +55,27 @@ failure recovery
 
 Используйте [manifest references](manifests/README.md), затем [showcases](../../showcases/README.md), затем labs.
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+CKAD не является его основной целью, но карта помогает читать manifests и понимать vocabulary команды.
+
+### Разработчик
+
+Использует CKAD как тренировку скорости работы с core objects, но production reasoning остаётся шире экзамена.
+
+### Тестировщик
+
+Получает полезный набор диагностических kubectl-навыков для проверки deployment behavior и failure states.
+
+### Перед следующей главой
+
+Переходите дальше, если можете:
+- быстро создать core resource;
+- прочитать его status/conditions;
+- объяснить, почему minimal exam YAML может быть недостаточен для production.
+
 Проверено: 2026-09-20.
 
 Цель CKAD-трека проекта — не выучить отдельный набор экзаменационных трюков, а использовать экзамен как **скоростную практику Kubernetes application primitives**, не смешивая её с полной production architecture.
