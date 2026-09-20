@@ -1,0 +1,15 @@
+# orders-api
+app:
+  payment-api:
+    base-url: ${PAYMENT_API_URL:http://payment-api:8080}
+    connect-timeout: 1s
+    read-timeout: 3s
+
+---
+# payment-api profile/document
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OIDC_ISSUER_URI}

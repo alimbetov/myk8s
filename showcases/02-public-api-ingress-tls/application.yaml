@@ -1,0 +1,13 @@
+server:
+  forward-headers-strategy: framework
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+        add-additional-paths: true
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 20s

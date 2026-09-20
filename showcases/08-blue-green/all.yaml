@@ -1,0 +1,86 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Blue and green are two complete application slots.
+# IMPORTANT:
+# - The production Service must select exactly one color.
+# - A selector that only matches app=orders would mix both versions.
+# - DB/event contracts must remain compatible while both colors exist.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders
+      color: blue
+  template:
+    metadata:
+      labels:
+        app: orders
+        color: blue
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/example/orders:1.0.0
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders
+      color: green
+  template:
+    metadata:
+      labels:
+        app: orders
+        color: green
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/example/orders:1.1.0
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+spec:
+  selector:
+    app: orders
+    color: blue
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-green-preview
+spec:
+  selector:
+    app: orders
+    color: green
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

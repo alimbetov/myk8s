@@ -1,0 +1,192 @@
+# ============================================================
+# SHOWCASE 03 — REST + POSTGRESQL + HPA + NETWORKPOLICY
+# ============================================================
+#
+# request
+#   ↓
+# Service -> Spring Pods
+#              |
+#              +--> Hikari -> postgres-rw:5432
+#              |
+#              +--> CPU metrics -> HPA
+#              |
+#              +--> NetworkPolicy controls egress
+#
+# САМАЯ ВАЖНАЯ СВЯЗЬ:
+#
+# resources.requests.cpu
+#       ↓
+# HPA Utilization denominator
+#
+# HPA.maxReplicas × Hikari.maximumPoolSize
+#       ↓
+# potential PostgreSQL connection pressure
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-api-config
+data:
+  # Logical DB endpoint. Не Pod IP.
+  DB_URL: jdbc:postgresql://postgres-rw:5432/orders
+
+  # 20 Pods * pool 10 ~= up to 200 connections.
+  DB_POOL_SIZE: "10"
+
+  PAYMENT_API_URL: http://payment-api:8080
+  PAYMENT_CONNECT_TIMEOUT: 1s
+  PAYMENT_READ_TIMEOUT: 3s
+
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ADD_ADDITIONAL_PATHS: "true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-api-secret
+type: Opaque
+stringData:
+  DB_USERNAME: orders_app
+  DB_PASSWORD: replace-at-deploy-time
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: orders-api
+
+  template:
+    metadata:
+      labels:
+        app: orders-api
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: orders-api-config
+            - secretRef:
+                name: orders-api-secret
+
+          resources:
+            requests:
+              # HPA averageUtilization считается относительно request.
+              # 350m actual / 500m request ~= 70%.
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              memory: 768Mi
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+
+          livenessProbe:
+            httpGet:
+              # ОСТОРОЖНО:
+              # не делайте /livez зависимым от PostgreSQL.
+              # DB outage не должен вызывать restart storm.
+              path: /livez
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+spec:
+  selector:
+    app: orders-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: orders-api
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    # Exact reference на Deployment.
+    name: orders-api
+
+  minReplicas: 3
+  # PRODUCTION:
+  # maxReplicas нельзя выбирать только по CPU.
+  # Проверьте DB connections, external APIs и node capacity.
+  maxReplicas: 20
+
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+  behavior:
+    scaleDown:
+      # Защита от слишком быстрого scale-down/flapping.
+      stabilizationWindowSeconds: 300
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: orders-api-default-deny-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: orders-api
+
+  policyTypes:
+    - Egress
+
+  # Пустой список = deny all egress.
+  # ВАЖНО: это также блокирует DNS.
+  egress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: orders-api-allow-postgres
+spec:
+  podSelector:
+    matchLabels:
+      app: orders-api
+
+  policyTypes:
+    - Egress
+
+  egress:
+    - to:
+        - podSelector:
+            # Этот пример предполагает PostgreSQL Pods в том же namespace
+            # с label app=postgres.
+            matchLabels:
+              app: postgres
+      ports:
+        - protocol: TCP
+          port: 5432
+
+# ВАЖНО:
+# DNS egress специально НЕ hardcoded.
+# В k3s/CNI labels CoreDNS могут отличаться.
+# Сначала inspect cluster DNS, затем пишите allow rule.

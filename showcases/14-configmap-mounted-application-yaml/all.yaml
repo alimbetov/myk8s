@@ -1,0 +1,55 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# ConfigMap key application.yaml is mounted as a file and loaded by Spring Boot.
+# IMPORTANT:
+# - Kubernetes can update the mounted file, but Spring does not automatically rebuild its context.
+# - Versioned immutable ConfigMaps + rollout are a simple production pattern.
+# - Avoid subPath when expecting projected ConfigMap updates.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-application-config-v1
+immutable: true
+data:
+  application.yaml: |
+    management:
+      endpoint:
+        health:
+          probes:
+            enabled: true
+            add-additional-paths: true
+    app:
+      customer-api:
+        base-url: http://customer-api:8080
+        connect-timeout: 1s
+        read-timeout: 3s
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+          env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: file:/etc/spring/
+          volumeMounts:
+            - name: application-config
+              mountPath: /etc/spring
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: orders-application-config-v1

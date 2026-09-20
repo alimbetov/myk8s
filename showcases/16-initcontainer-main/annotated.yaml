@@ -1,0 +1,106 @@
+# ============================================================
+# SHOWCASE 16 — INITCONTAINER + MAIN CONTAINER
+# ============================================================
+#
+# ConfigMap template
+#      |
+#      v
+# initContainer
+#      |
+#      | generates
+#      v
+# shared emptyDir/application.yaml
+#      |
+#      v
+# Spring Boot main container
+#
+# Main container NEVER starts until ordinary initContainer succeeds.
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config-template
+data:
+  application.template.yaml: |
+    app:
+      instance-name: __POD_NAME__
+      customer-api:
+        base-url: http://customer-api:8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: orders-api
+
+  template:
+    metadata:
+      labels:
+        app: orders-api
+
+    spec:
+      automountServiceAccountToken: false
+
+      initContainers:
+        - name: prepare-config
+          image: busybox:1.36
+
+          command:
+            - sh
+            - -c
+            - |
+              # Reads template and replaces placeholder.
+              sed "s/__POD_NAME__/$POD_NAME/g"                 /templates/application.template.yaml                 > /work/config/application.yaml
+
+          env:
+            - name: POD_NAME
+              valueFrom:
+                # Downward API: Kubernetes injects Pod metadata.
+                fieldRef:
+                  fieldPath: metadata.name
+
+          volumeMounts:
+            - name: config-template
+              mountPath: /templates
+              readOnly: true
+
+            - name: runtime-config
+              # Shared with main container.
+              mountPath: /work/config
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: file:/work/config/
+
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /work/config
+              readOnly: true
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+      volumes:
+        - name: config-template
+          configMap:
+            name: orders-config-template
+
+        - name: runtime-config
+          # Pod-lifetime ephemeral shared storage.
+          # Pod replacement -> new emptyDir.
+          emptyDir: {}
+
+# ОСТОРОЖНО:
+# initContainer не должен превращаться в бесконечный "wait for DB".
+# Для dependencies обычно нужны finite timeout/retry/readiness.

@@ -1,0 +1,119 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Demonstrates service discovery + NetworkPolicy as separate layers from OAuth2/JWT.
+# IMPORTANT:
+# - NetworkPolicy controls reachability, not cryptographic identity.
+# - DNS/Service routing can work while application authentication still returns 401/403.
+# - Labels are network selectors, not trusted workload credentials by themselves.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config
+data:
+  PAYMENT_API_URL: http://payment-api:8080
+  PAYMENT_CONNECT_TIMEOUT: 1s
+  PAYMENT_READ_TIMEOUT: 3s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-config
+data:
+  OIDC_ISSUER_URI: https://identity.example.kz/realms/apps
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+          envFrom:
+            - configMapRef:
+                name: orders-config
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+spec:
+  selector:
+    app: orders-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-api
+  template:
+    metadata:
+      labels:
+        app: payment-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: ghcr.io/example/payment-api:1.0.0
+          envFrom:
+            - configMapRef:
+                name: payment-config
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-api
+spec:
+  selector:
+    app: payment-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: payment-api-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: payment-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: orders-api
+      ports:
+        - protocol: TCP
+          port: 8080

@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      connection-timeout: 3000
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+        add-additional-paths: true
+
+app:
+  payment-api:
+    base-url: ${PAYMENT_API_URL:http://payment-api:8080}
+    connect-timeout: ${PAYMENT_CONNECT_TIMEOUT:1s}
+    read-timeout: ${PAYMENT_READ_TIMEOUT:3s}

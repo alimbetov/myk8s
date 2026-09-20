@@ -1,0 +1,117 @@
+# ============================================================
+# SHOWCASE 11 — RABBITMQ WORKER + CLUSTER OPERATOR
+# ============================================================
+#
+# producer
+#   |
+#   v
+# rabbit-main:5672
+#   |
+#   v
+# RabbitMQ cluster
+#   |
+#   v
+# queue
+#   |
+#   v
+# document-worker Pods
+#
+# REQUIREMENT:
+# RabbitMQ Cluster Operator installed.
+# ============================================================
+
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbit-main
+
+spec:
+  # RabbitMQ production clusters usually prefer odd node count.
+  replicas: 3
+
+  persistence:
+    # Per-node persistent storage.
+    storage: 20Gi
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: 2Gi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: document-worker-config
+data:
+  # OPERATOR-CREATED client Service.
+  # Spring client не подключается к specific broker Pod.
+  RABBITMQ_HOST: rabbit-main
+  RABBITMQ_PORT: "5672"
+
+  # Queue logical name.
+  WORK_QUEUE: document-generation
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: document-worker-rabbit
+type: Opaque
+stringData:
+  # Production user/password lifecycle должен быть автоматизирован.
+  RABBITMQ_USERNAME: replace-with-application-user
+  RABBITMQ_PASSWORD: replace-at-deploy-time
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: document-worker
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: document-worker
+
+  template:
+    metadata:
+      labels:
+        app: document-worker
+
+    spec:
+      automountServiceAccountToken: false
+
+      # Дайте consumer время закончить/nack текущую delivery.
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: worker
+          image: ghcr.io/example/document-worker:1.0.0
+
+          envFrom:
+            - configMapRef:
+                name: document-worker-config
+            - secretRef:
+                name: document-worker-rabbit
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 768Mi
+
+# НЕ ПУТАТЬ:
+#
+# RabbitMQ Cluster Operator
+#   -> brokers / StatefulSet / Services / storage
+#
+# Messaging topology
+#   -> queues / exchanges / bindings / users
+#
+# PVC persistence != quorum queue replication.
+#
+# Worker replicas × Spring listener concurrency = total consumers.
+# Это нужно проверять против DB/external capacity.

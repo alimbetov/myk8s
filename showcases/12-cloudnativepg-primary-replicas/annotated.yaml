@@ -1,0 +1,129 @@
+# ============================================================
+# SHOWCASE 12 — POSTGRESQL PRIMARY/REPLICAS WITH CLOUDNATIVEPG
+# ============================================================
+#
+# orders-api writes
+#     |
+#     v
+# orders-db-rw
+#     |
+#     v
+# current PRIMARY
+#
+# report-api reads
+#     |
+#     v
+# orders-db-ro
+#     |
+#     v
+# replicas
+#
+# REQUIREMENT:
+# CloudNativePG Operator installed.
+# ============================================================
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-db-app
+
+# CloudNativePG supports basic-auth style Secret for bootstrap owner.
+type: kubernetes.io/basic-auth
+
+stringData:
+  username: orders_app
+  password: replace-at-deploy-time
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: orders-db
+
+spec:
+  # Нормальное состояние:
+  # 1 primary + 2 replicas.
+  instances: 3
+
+  bootstrap:
+    initdb:
+      database: orders
+      owner: orders_app
+
+      secret:
+        # Exact Secret reference.
+        name: orders-db-app
+
+  storage:
+    # Каждый DB instance получает persistent storage.
+    size: 20Gi
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: 2Gi
+    limits:
+      memory: 2Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-api-db-config
+data:
+  # ГЛАВНОЕ:
+  # приложение использует operator-managed logical write Service.
+  #
+  # Оно НЕ знает имя current primary Pod.
+  DB_URL: jdbc:postgresql://orders-db-rw:5432/orders
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: orders-api
+
+  template:
+    metadata:
+      labels:
+        app: orders-api
+
+    spec:
+      automountServiceAccountToken: false
+
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-api-db-config
+                  key: DB_URL
+
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: orders-db-app
+                  key: username
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: orders-db-app
+                  key: password
+
+# CloudNativePG создаёт Services примерно такого назначения:
+#
+# orders-db-rw -> current primary
+# orders-db-ro -> replicas
+# orders-db-r  -> any instance
+#
+# ВАЖНО:
+# replication != backup.
+# DELETE FROM orders тоже реплицируется.
+# Production требует backup/WAL/PITR/restore tests.

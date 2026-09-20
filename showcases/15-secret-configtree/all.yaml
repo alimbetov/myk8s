@@ -1,0 +1,57 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Secret keys become files imported by Spring Boot configtree.
+# IMPORTANT:
+# - configtree reduces process-env exposure but does not solve secret rotation by itself.
+# - Hikari/clients may keep old credentials until reload/restart.
+# - Protect Kubernetes API/RBAC and backups containing Secret data.
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-db-configtree
+type: Opaque
+stringData:
+  spring.datasource.username: orders_app
+  spring.datasource.password: replace-at-deploy-time
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-db-nonsecret
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://orders-db-rw:5432/orders
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: ghcr.io/example/orders-api:1.0.0
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-db-nonsecret
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_CONFIG_IMPORT
+              value: configtree:/etc/secrets/
+          volumeMounts:
+            - name: db-secret
+              mountPath: /etc/secrets
+              readOnly: true
+      volumes:
+        - name: db-secret
+          secret:
+            secretName: orders-db-configtree

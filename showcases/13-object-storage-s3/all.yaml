@@ -1,0 +1,55 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Spring Boot uses S3 through a logical endpoint; object storage itself is managed separately.
+# IMPORTANT:
+# - Keep endpoint/bucket in ConfigMap and credentials in Secret.
+# - PostgreSQL metadata + S3 object write are not one ACID transaction.
+# - Production needs retention, encryption, checksum, lifecycle and orphan cleanup.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: file-api-storage
+data:
+  S3_ENDPOINT: http://object-storage:9000
+  S3_REGION: us-east-1
+  S3_BUCKET: uploads
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: file-api-storage
+type: Opaque
+stringData:
+  S3_ACCESS_KEY: replace-at-deploy-time
+  S3_SECRET_KEY: replace-at-deploy-time
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: file-api
+  template:
+    metadata:
+      labels:
+        app: file-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: app
+          image: ghcr.io/example/file-api:1.0.0
+          envFrom:
+            - configMapRef:
+                name: file-api-storage
+            - secretRef:
+                name: file-api-storage
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 768Mi
+# object-storage Service/cluster is intentionally external to this showcase.
