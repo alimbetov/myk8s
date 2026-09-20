@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Secret keys become files imported by Spring Boot configtree.
+# IMPORTANT:
+# - configtree reduces process-env exposure but does not solve secret rotation by itself.
+# - Hikari/clients may keep old credentials until reload/restart.
+# - Protect Kubernetes API/RBAC and backups containing Secret data.
+
 apiVersion: v1
 kind: Secret
 metadata:
