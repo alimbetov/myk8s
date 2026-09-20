@@ -12,6 +12,27 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Headless Service
+      |
+      v
+Stable Pod DNS
+      |
+      v
+StatefulSet
+      |
+      +--> Pod ordinal
+      |
+      +--> dedicated PVC
+      |
+      v
+stateful application
+```
+
+StatefulSet — фундаментальный Kubernetes primitive для identity/storage/order, поверх которого product-aware operators строят PostgreSQL/Kafka/RabbitMQ clusters.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
