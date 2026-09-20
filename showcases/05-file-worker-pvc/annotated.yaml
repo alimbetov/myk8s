@@ -1,0 +1,98 @@
+# ============================================================
+# SHOWCASE 05 — FILE WORKER + PVC
+# ============================================================
+#
+# container /data/work
+#        ↑
+# volumeMount name=work
+#        ↑
+# volume name=work
+#        ↑
+# claimName=work-data
+#        ↑
+# PVC metadata.name=work-data
+#
+# ВАЖНО:
+# - volumeMount.name должен совпасть с volume.name
+# - claimName должен совпасть с PVC name
+# ============================================================
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: work-data
+spec:
+  accessModes:
+    # Strict single-Pod read/write access.
+    # Это НЕ обычный RWO.
+    - ReadWriteOncePod
+
+  resources:
+    requests:
+      storage: 10Gi
+
+  # storageClassName omitted:
+  # используется default StorageClass, если он настроен.
+  #
+  # PRODUCTION:
+  # лучше явно знать, какой CSI/StorageClass используется.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: file-worker-config
+data:
+  # Spring worker будет писать именно сюда.
+  WORK_DIRECTORY: /data/work
+  CLEANUP_AFTER: 24h
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-worker
+spec:
+  # Один writer, потому что PVC использует ReadWriteOncePod.
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: file-worker
+
+  template:
+    metadata:
+      labels:
+        app: file-worker
+
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: worker
+          image: ghcr.io/example/file-worker:1.0.0
+
+          envFrom:
+            - configMapRef:
+                name: file-worker-config
+
+          volumeMounts:
+            - name: work
+              # Внутри JVM это обычный filesystem path.
+              mountPath: /data/work
+
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+
+      volumes:
+        - name: work
+          persistentVolumeClaim:
+            # Exact reference на PVC.
+            claimName: work-data
+
+# PRODUCTION:
+# PVC survives Pod replacement, но это не backup.
+# Нужны отдельные retention/backup/restore решения.
