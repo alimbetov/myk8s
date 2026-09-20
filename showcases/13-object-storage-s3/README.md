@@ -1,5 +1,12 @@
 # Showcase 13 — Spring Boot + S3-compatible object storage
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Spring Boot configuration](application.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 Проверено: 2026-09-20.
 
 ## Схема
