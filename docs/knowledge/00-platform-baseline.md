@@ -76,6 +76,42 @@ spec:
 
 > **Смотрите также:** [Showcase 01 — internal REST service](../../showcases/01-internal-rest-service/README.md) → [annotated manifest](../../showcases/01-internal-rest-service/annotated.yaml).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик должен понять
+
+- где проходит граница между приложением и платформой;
+- почему Pod нельзя считать постоянным сервером;
+- какие зависимости становятся отдельными платформенными контрактами: DNS, storage, secrets, ingress, observability;
+- почему требования “сервис всегда доступен” нужно переводить в replicas, readiness, rollout, dependency availability и recovery.
+
+### Разработчик должен понять
+
+- Spring Boot process живёт внутри disposable Pod;
+- адрес другого сервиса — Service DNS, а не IP;
+- configuration приходит снаружи image;
+- local container filesystem не является business storage;
+- приложение должно корректно переживать SIGTERM, retries и replacement.
+
+### Тестировщик должен уметь проверить
+
+- удаление Pod и автоматическое восстановление;
+- смену Pod IP без потери Service identity;
+- поведение при неправильной configuration;
+- разницу между Running и Ready;
+- что business data не теряется при replacement stateless Pod.
+
+### Перед следующей главой
+
+Вы должны уметь словами объяснить цепочку:
+
+```text
+Deployment -> Pod -> Spring Boot
+Service -> Ready Pods
+ConfigMap/Secret -> runtime config
+PVC/external DB -> persistent state
+```
+
 Проверено: 2026-09-20.
 
 Эта глава строит общую mental model. Если понять её, остальные Kubernetes objects перестают выглядеть как набор несвязанных YAML.
