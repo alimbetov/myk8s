@@ -12,6 +12,26 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Spring producer
+      |
+      v
+RabbitMQ client Service
+      |
+      v
+RabbitMQ Operator-managed cluster
+      |
+      v
+Queue
+      |
+      v
+Spring worker Deployment
+```
+
+Kubernetes управляет lifecycle брокеров, а RabbitMQ product semantics управляют queues, acknowledgements и replication.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
