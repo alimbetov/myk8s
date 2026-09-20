@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Spring Boot uses S3 through a logical endpoint; object storage itself is managed separately.
+# IMPORTANT:
+# - Keep endpoint/bucket in ConfigMap and credentials in Secret.
+# - PostgreSQL metadata + S3 object write are not one ACID transaction.
+# - Production needs retention, encryption, checksum, lifecycle and orphan cleanup.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
