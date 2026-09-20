@@ -1,5 +1,54 @@
 # Manifest Reference — NetworkPolicy
 
+## Учебная схема объекта
+
+### Где NetworkPolicy работает
+
+```text
+caller Pod
+    |
+    | network packet
+    v
+NetworkPolicy decision
+    |
+    v
+target Pod
+    |
+    v
+Spring Security / application auth
+```
+
+NetworkPolicy — L3/L4 reachability. Она не знает JWT, role пользователя или business permission.
+
+### Annotated default deny
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: orders
+
+  policyTypes:
+    - Egress
+
+  egress: []        # deny all egress, включая DNS
+```
+
+### Диагностическая мысль
+
+```text
+DNS fails       -> egress/DNS rule?
+DNS works
+TCP timeout     -> network policy / port?
+HTTP 401/403    -> уже application security
+```
+
+Практика: [service-to-service security](../../../showcases/06-service-to-service-security/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
