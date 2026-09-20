@@ -12,6 +12,27 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Spring Boot API
+    |
+    | S3 protocol
+    v
+Object Storage
+    |
+    +--> objects
+
+Spring Boot API
+    |
+    v
+PostgreSQL
+    |
+    +--> metadata / state
+```
+
+Object storage находится **рядом с БД, а не вместо БД**: S3 хранит blobs, PostgreSQL — metadata и workflow state.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
