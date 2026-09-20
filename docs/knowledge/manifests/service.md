@@ -1,5 +1,60 @@
 # Manifest Reference — Service
 
+## Учебная схема объекта
+
+### Где Service находится в системе
+
+```text
+caller
+  |
+  | DNS: orders
+  v
+Service orders
+  |
+  | selector
+  v
+EndpointSlice
+  |
+  +--> Ready Pod A
+  +--> Ready Pod B
+```
+
+Service создаёт **stable network identity** поверх disposable Pods.
+
+### Annotated fragment
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: orders          # должен совпасть с Pod label
+
+  ports:
+    - name: http
+      port: 8080         # caller uses orders:8080
+      targetPort: http   # maps to containerPort.name=http
+```
+
+### Не путать
+
+```text
+Service.metadata.name
+ !=
+Deployment.metadata.name requirement
+
+Service selector
+ ->
+Pod labels
+```
+
+Полный пример: [Showcase 01 annotated Service](../../../showcases/01-internal-rest-service/annotated.yaml).
+
 Проверено: 2026-09-20. Базовая версия Kubernetes: 1.37.
 
 Эта глава — подробный справочник по `Service`. Она нужна, чтобы вы могли открыть любой Service manifest и понимать не только синтаксис, но и **что Kubernetes реально сделает с каждым полем**.
