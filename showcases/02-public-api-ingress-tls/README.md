@@ -1,5 +1,12 @@
 # Showcase 02 — Public Spring Boot API through Ingress + TLS
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Spring Boot configuration](application.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 ## Схема
 
 ```text
