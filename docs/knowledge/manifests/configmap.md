@@ -369,6 +369,13 @@ Must know:
 
 ---
 
+## Production-like examples
+
+- [ConfigMap via envFrom](../../../showcases/01-internal-rest-service/README.md)
+- [ConfigMap as mounted application.yaml](../../../showcases/14-configmap-mounted-application-yaml/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/configuration/configmap/
