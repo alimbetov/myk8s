@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Requires RabbitMQ Cluster Operator.
+# IMPORTANT:
+# - Spring clients use the operator-created rabbit-main client Service.
+# - Cluster Operator manages brokers; queue topology has separate ownership.
+# - Worker replicas/concurrency must be limited by downstream capacity.
+
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
