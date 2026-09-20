@@ -12,6 +12,20 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Pod
+ |
+ +--> Spring Boot main process
+ |
+ +--> Sidecar helper process
+       |
+       +--> telemetry/proxy/agent
+```
+
+Sidecar находится **внутри той же workload unit**, поэтому масштабируется и заменяется вместе с приложением.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
