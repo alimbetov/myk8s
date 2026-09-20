@@ -1,0 +1,176 @@
+# ============================================================
+# SHOWCASE 01 — INTERNAL SPRING BOOT REST SERVICE
+# ============================================================
+#
+# Общая схема:
+#
+# caller Pod
+#    |
+#    | http://customer-api:8080
+#    v
+# Service customer-api
+#    |
+#    | selector app.kubernetes.io/name=customer-api
+#    v
+# EndpointSlice
+#    |
+#    v
+# Ready Spring Boot Pods
+#
+# Главные связи:
+# 1) Service.selector <-> Pod labels
+# 2) Service.targetPort=http <-> containerPort.name=http
+# 3) ConfigMap/Secret -> envFrom -> Spring Environment
+# 4) readinessProbe -> Pod Ready -> EndpointSlice readiness
+#
+# ВАЖНО:
+# - Service НЕ ищет Deployment по имени.
+# - Service НЕ знает Spring Boot.
+# - Service выбирает Pods только по labels.
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-api-config
+data:
+  # Не секрет. Здесь endpoint БД.
+  # Spring Boot получает значение как переменную окружения DB_URL.
+  DB_URL: jdbc:postgresql://postgres-rw:5432/customer
+
+  # Не секрет. Runtime tuning.
+  CUSTOMER_CACHE_TTL: 60s
+
+  # Включаем Spring Boot health probes.
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ADD_ADDITIONAL_PATHS: "true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: customer-api-secret
+type: Opaque
+stringData:
+  # Для учебного стенда значения записаны явно.
+  # В production реальные secrets НЕ коммитим в Git.
+  DB_USERNAME: customer_app
+  DB_PASSWORD: replace-at-deploy-time
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: customer-api
+
+# Spring Boot приложению Kubernetes API не нужен.
+# Поэтому token не монтируем в Pod без причины.
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-api
+spec:
+  # Два экземпляра приложения.
+  # Service будет балансировать только между Ready Pods.
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: customer-api
+
+  template:
+    metadata:
+      labels:
+        # ВАЖНО:
+        # значение должно совпадать с Deployment selector
+        # и Service selector.
+        app.kubernetes.io/name: customer-api
+
+    spec:
+      serviceAccountName: customer-api
+      automountServiceAccountToken: false
+
+      # kubelet даст приложению время завершиться после SIGTERM.
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: app
+          image: ghcr.io/example/customer-api:1.0.0
+
+          ports:
+            - name: http
+              # Spring Boot server.port.
+              containerPort: 8080
+
+          # Все keys ConfigMap и Secret превращаются в env vars.
+          # ОСТОРОЖНО: изменение этих objects не меняет env уже
+          # работающей JVM. Обычно нужен rollout/restart.
+          envFrom:
+            - configMapRef:
+                name: customer-api-config
+            - secretRef:
+                name: customer-api-secret
+
+          resources:
+            requests:
+              # Scheduler учитывает requests при выборе node.
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              # Memory limit может закончиться OOMKilled.
+              memory: 768Mi
+
+          startupProbe:
+            httpGet:
+              path: /livez
+              port: http
+            # Даём JVM до 150 секунд на startup:
+            # 30 failures * 5s.
+            periodSeconds: 5
+            failureThreshold: 30
+
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: http
+            # Liveness отвечает на вопрос:
+            # "нужно ли перезапустить container?"
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            # Readiness отвечает:
+            # "можно ли отправлять сюда traffic?"
+            periodSeconds: 5
+
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-api
+spec:
+  type: ClusterIP
+
+  selector:
+    # Это главный mapping Service -> Pods.
+    # Если label не совпадёт — Service останется без endpoints.
+    app.kubernetes.io/name: customer-api
+
+  ports:
+    - name: http
+      protocol: TCP
+
+      # Этот порт использует caller:
+      # http://customer-api:8080
+      port: 8080
+
+      # targetPort "http" ищет container port с name=http.
+      # Это лучше, чем дублировать число 8080 везде.
+      targetPort: http
