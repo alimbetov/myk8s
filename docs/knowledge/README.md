@@ -2,58 +2,88 @@
 
 Проверено: 2026-09-20.
 
-Эта библиотека превращает prompt framework проекта `myk8s` в практическую production-grade базу знаний для Spring Boot-разработчика.
+Эта библиотека — учебник, Spring Boot cookbook, CKAD workbook и production runbook в одном репозитории.
 
 ## Version baseline
 
-- Kubernetes docs baseline: **v1.37** (latest minor released 2026-08-26).
-- CKAD exam baseline: **Kubernetes v1.35** на дату проверки.
-- Spring Boot reference baseline: **4.1.x**; большинство принципов применимо и к Boot 3.x.
-- Для лабораторий допускается k3s, но различия дистрибутива должны быть отмечены отдельно.
+- Production research: Kubernetes **1.37**.
+- CKAD exam baseline на дату проверки: Kubernetes **1.35**.
+- Spring Boot reference baseline: **4.1.x**; принципы применимы и к Boot 3.x.
+- Labs можно выполнять на k3s с учетом особенностей bundled CNI/Ingress/StorageClass.
 
 ## Стандарт документации
 
-- [Documentation conventions](CONVENTIONS.md) — обязательный формат: почему, как было раньше/как сейчас, практические примеры, failure practice, anti-patterns, production checklist и CKAD mapping. Sources используются для проверки, а не вместо объяснения.
+- [Documentation conventions](CONVENTIONS.md)
 
-## Карта библиотеки
+Каждая глава должна быть понятна без обязательного перехода во внешние Sources. Ссылки используются для проверки спецификации и углубления.
 
-1. [Platform baseline](00-platform-baseline.md)
-2. [Spring Boot configuration and secrets](01-spring-boot-configuration-secrets.md)
-3. [Services, DNS and service-to-service security](02-services-dns-service-security.md)
-4. [Deployments, probes, resources and rollouts](03-deployments-probes-rollouts.md)
-5. [Stateful dependencies](04-stateful-dependencies.md)
-6. [Day-2 operations and failure playbook](05-day2-failure-playbook.md)
-7. [CKAD production mapping](06-ckad-map.md)
+## Foundation
 
-Практика: [labs/](../../labs/)  
+1. [00 — Platform baseline](00-platform-baseline.md)
+2. [01 — Spring Boot configuration and secrets](01-spring-boot-configuration-secrets.md)
+3. [02 — Services, DNS and service-to-service security](02-services-dns-service-security.md)
+4. [03 — Deployments, probes, resources and rollouts](03-deployments-probes-rollouts.md)
+5. [04 — Stateful dependencies](04-stateful-dependencies.md)
+6. [05 — Day-2 operations and failure playbook](05-day2-failure-playbook.md)
+7. [06 — CKAD map](06-ckad-map.md)
+
+## Spring Boot workload track
+
+8. [07 — Container image + JVM in Kubernetes](07-container-image-jvm.md)
+9. [08 — Resources, JVM memory and CPU](08-resources-jvm-memory-cpu.md)
+10. [09 — Spring Boot probes and lifecycle](09-spring-boot-probes-lifecycle.md)
+11. [10 — Graceful shutdown and termination](10-graceful-shutdown-termination.md)
+12. [11 — HTTP clients: DNS, timeout, retry and pool](11-http-clients-dns-timeout-retry-pool.md)
+13. [12 — PostgreSQL connectivity and HikariCP](12-postgresql-connectivity-hikaricp.md)
+
+## Networking and security track
+
+14. [13 — Service discovery and internal services](13-service-discovery-internal-services.md)
+15. [14 — Service-to-service authentication](14-service-to-service-authentication.md)
+16. [15 — NetworkPolicy and egress](15-networkpolicy-egress.md)
+17. [16 — ServiceAccount and RBAC](16-serviceaccount-rbac.md)
+18. [17 — Secrets lifecycle and rotation](17-secrets-lifecycle-rotation.md)
+19. [18 — Ingress, Gateway API and TLS](18-ingress-gateway-api-tls.md)
+
+## Delivery and operations track
+
+20. [19 — Deployment strategies](19-deployment-strategies.md)
+21. [20 — HPA / autoscaling](20-hpa-autoscaling.md)
+22. [21 — Jobs / CronJobs / Spring Batch](21-jobs-cronjobs-spring-batch.md)
+23. [22 — Observability](22-observability.md)
+
+## Практика
+
+- [Lab 01 — Spring Boot Kubernetes baseline](../../labs/01-spring-boot-baseline/README.md)
+- [Lab 02 — JVM/resources/probes](../../labs/02-jvm-resources-probes/README.md)
+- [Lab 03 — networking/security](../../labs/03-networking-security/README.md)
+- [Lab 04 — rollout/HPA](../../labs/04-rollout-hpa/README.md)
+- [Lab 05 — Jobs/CronJobs/operations](../../labs/05-jobs-operations/README.md)
+
 Reusable manifests: [examples/](../../examples/)
 
-## Правило чтения
+## Как пользоваться библиотекой
 
-Каждая глава должна быть понятна без обязательного перехода во внешнюю документацию. Ссылки в Sources — проверочный и углубляющий слой.
-
-Каждую тему рассматриваем одновременно через четыре слоя:
+Для обучения:
 
 ```text
-Spring Boot process
-        |
-        v
-Pod / workload controller
-        |
-        v
-Service / DNS / storage / network
-        |
-        v
-Platform operations + security + observability
+прочитать mental model
+ -> повторить YAML/Java
+ -> выполнить commands
+ -> сломать scenario
+ -> диагностировать
+ -> исправить
+ -> повторить CKAD speed round
 ```
 
-Network isolation не заменяет authentication. Secret не является полноценным secret-management lifecycle. Readiness не равна liveness. StatefulSet не превращает базу данных в HA-систему.
+Во время incident:
 
-## Источники
+```text
+symptom
+ -> 05 Day-2 playbook
+ -> тематическая глава
+ -> failure practice/runbook
+ -> verify recovery
+```
 
-- Kubernetes releases: https://kubernetes.io/releases/
-- Kubernetes concepts: https://kubernetes.io/docs/concepts/
-- Spring Boot reference: https://docs.spring.io/spring-boot/reference/
-- CKAD: https://training.linuxfoundation.org/certification/certified-kubernetes-application-developer-ckad/
-
-Дата проверки источников: **2026-09-20**.
+Главный принцип: Kubernetes изучается через эксплуатационный контракт реального Spring Boot приложения, а не как набор YAML API.
