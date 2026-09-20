@@ -1,0 +1,66 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbit-main
+spec:
+  replicas: 3
+  persistence:
+    storage: 20Gi
+  resources:
+    requests:
+      cpu: "1"
+      memory: 2Gi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: document-worker-config
+data:
+  RABBITMQ_HOST: rabbit-main
+  RABBITMQ_PORT: "5672"
+  WORK_QUEUE: document-generation
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: document-worker-rabbit
+type: Opaque
+stringData:
+  RABBITMQ_USERNAME: replace-with-application-user
+  RABBITMQ_PASSWORD: replace-at-deploy-time
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: document-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: document-worker
+  template:
+    metadata:
+      labels:
+        app: document-worker
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: worker
+          image: ghcr.io/example/document-worker:1.0.0
+          envFrom:
+            - configMapRef:
+                name: document-worker-config
+            - secretRef:
+                name: document-worker-rabbit
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 768Mi
+# Queue/vhost/user resources are intentionally not modeled here.
+# Use application provisioning, definitions, or RabbitMQ Messaging Topology Operator.
