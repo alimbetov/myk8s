@@ -252,6 +252,12 @@ Pod не создаёт capacity до Ready. Поэтому startup probe/readin
 
 HPA basics могут быть application operational knowledge; production требует behavior policies, custom metrics, JVM/downstream analysis.
 
+## Связанные production-like примеры
+
+- [HPA + Spring Boot + PostgreSQL capacity](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+
+Для каждого стенда откройте `README.md` → `WALKTHROUGH.md` → `all.yaml`.
+
 ## Sources
 
 - https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
