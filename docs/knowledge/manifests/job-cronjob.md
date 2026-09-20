@@ -1,5 +1,60 @@
 # Manifest Reference — Job + CronJob
 
+## Учебная схема объекта
+
+### CronJob -> Job -> Pod
+
+```text
+CronJob
+  |
+  | schedule
+  v
+Job
+  |
+  | retry/completion/deadline
+  v
+Pod
+  |
+  v
+Spring Batch process
+```
+
+### Annotated fragment
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reconciliation
+
+spec:
+  schedule: "0 2 * * *"
+  timeZone: Asia/Almaty
+
+  concurrencyPolicy: Forbid   # no overlapping scheduled run
+
+  jobTemplate:
+    spec:
+      backoffLimit: 2         # retry policy belongs to Job
+
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: batch
+              image: registry/reconciliation:1.0.0
+```
+
+### Главное разделение
+
+```text
+CronJob -> WHEN
+Job     -> HOW execution completes/retries
+Spring Batch -> WHAT business work means
+```
+
+Практика: [CronJob showcase](../../../showcases/04-batch-cronjob/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
