@@ -165,6 +165,13 @@ orders -> telemetry endpoint
 
 Нужно понимать podSelector, namespaceSelector, ports, ingress/egress, default deny.
 
+## Связанные production-like примеры
+
+- [Default deny and DB egress](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+- [Caller-specific ingress](../../showcases/06-service-to-service-security/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/services-networking/network-policies/
