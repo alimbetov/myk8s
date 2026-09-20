@@ -331,6 +331,12 @@ Know:
 - describe HPA;
 - kubectl autoscale.
 
+## Production-like examples
+
+- [HPA + CPU request + DB capacity](../../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/
