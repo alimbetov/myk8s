@@ -1,5 +1,11 @@
 # Showcase 08 — Blue/Green Deployment
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 ## Схема
 
 ```text
