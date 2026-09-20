@@ -309,6 +309,13 @@ kubectl auth can-i --list --as=system:serviceaccount:<ns>:<sa>
 
 Must know ServiceAccount, Role, RoleBinding, serviceAccountName, auth can-i, namespaced vs cluster scope.
 
+## Production-like examples
+
+- [ServiceAccount for application Pod](../../../showcases/01-internal-rest-service/README.md)
+- [Least-privilege Role/RoleBinding example](../../../examples/security/rbac/serviceaccount-role-binding.yaml)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/security/service-accounts/
