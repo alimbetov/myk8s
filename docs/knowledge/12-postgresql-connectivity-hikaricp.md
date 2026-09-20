@@ -57,6 +57,39 @@ DB/network connect timeout
 
 Практика: [CloudNativePG](../../showcases/12-cloudnativepg-primary-replicas/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Фиксирует требования к consistency, read/write endpoints, failover behavior и ограничения DB capacity.
+
+### Разработчик
+
+Связывает Hikari settings с replica/HPA count, задаёт transaction boundaries и finite acquisition/query timeouts.
+
+### Тестировщик
+
+Проверяет:
+- wrong password;
+- DB unavailable;
+- pool exhaustion;
+- failover/reconnect;
+- long transaction;
+- replica lag where read-only endpoint used.
+
+### Перед следующей главой
+
+Нужно уметь объяснить:
+
+```text
+Spring request
+ -> Hikari pool
+ -> logical DB Service
+ -> database role
+```
+
+и почему pool size нельзя настраивать независимо от replica count.
+
 Проверено: 2026-09-20.
 
 Эта глава про приложение-клиент PostgreSQL. Развёртывание самой HA базы будет отдельным stateful track.
