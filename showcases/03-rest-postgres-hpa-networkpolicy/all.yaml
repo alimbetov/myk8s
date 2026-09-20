@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Demonstrates cross-resource coupling: CPU request -> HPA, replicas -> Hikari -> DB capacity.
+# IMPORTANT:
+# - default-deny egress also blocks DNS unless explicitly allowed.
+# - HPA maxReplicas must be checked against PostgreSQL connection capacity.
+# - Database availability should not be used as a naive liveness dependency.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
