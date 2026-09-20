@@ -369,6 +369,13 @@ Production дополнительно: supply chain, layered images, SBOM, patch
 - image traceable to source commit;
 - base JRE has update policy.
 
+## Связанные production-like примеры
+
+- [Internal REST service — container inside Deployment](../../showcases/01-internal-rest-service/README.md)
+- [Native sidecar — several containers in one Pod](../../showcases/17-native-sidecar/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://docs.spring.io/spring-boot/reference/packaging/container-images/
