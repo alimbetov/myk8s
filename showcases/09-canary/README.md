@@ -1,5 +1,11 @@
 # Showcase 09 — Canary with Gateway API weighted backends
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 ## Схема
 
 ```text
