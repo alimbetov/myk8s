@@ -57,6 +57,41 @@ Deployment revision
 
 Практика: [native telemetry sidecar](../../showcases/17-native-sidecar/README.md), [Kafka](../../showcases/10-kafka-producer-consumer/README.md), [RabbitMQ](../../showcases/11-rabbitmq-worker/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Определяет SLI/SLO и business signals, а не только инфраструктурные dashboards.
+
+### Разработчик
+
+Экспортирует metrics/logs/traces с полезной корреляцией и не пишет secrets/PII без необходимости.
+
+### Тестировщик
+
+Использует observability как источник доказательств:
+- изменился ли error rate;
+- растёт ли latency;
+- появился ли lag;
+- какой version/Pod обрабатывал запрос;
+- совпадает ли user-visible failure с telemetry.
+
+### После этой главы
+
+Читатель должен уметь пройти всю цепочку:
+
+```text
+business symptom
+ -> request/trace
+ -> Spring/JVM signal
+ -> Kubernetes state
+ -> dependency signal
+ -> root cause hypothesis
+ -> verification
+```
+
+Это и есть operational literacy, к которой ведёт весь учебник.
+
 Проверено: 2026-09-20.
 
 Observability нужна, чтобы по внешним signals понять внутреннее состояние distributed system. В Kubernetes одного `kubectl logs` недостаточно.
