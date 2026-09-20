@@ -1,5 +1,55 @@
 # 01 — Spring Boot configuration, ConfigMap and Secret
 
+## Учебная карта темы
+
+### Место конфигурации в системе
+
+```text
+Git / deployment values
+        |
+        +--> ConfigMap ------+
+        |                   |
+        +--> Secret ---------+--> Pod
+                                 |
+                                 v
+                         Spring Environment
+                                 |
+                                 v
+                      @ConfigurationProperties
+```
+
+Spring Boot image должен быть один и тот же между environments. Меняются **runtime values**, а не JAR/image.
+
+### Три способа доставки
+
+```text
+ConfigMap/Secret
+   |
+   +--> env / envFrom
+   |
+   +--> mounted files
+   |
+   +--> configtree
+```
+
+### Annotated fragment
+
+```yaml
+env:
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: orders-db      # exact Secret object reference
+        key: password        # key внутри Secret
+
+# Spring:
+# spring.datasource.password=${DB_PASSWORD}
+```
+
+> **Важно:** изменение Secret object не меняет environment уже работающей JVM. Для env-based delivery обычно нужен rollout/restart.
+
+Полные варианты: [mounted application.yaml](../../showcases/14-configmap-mounted-application-yaml/README.md) и [Secret configtree](../../showcases/15-secret-configtree/README.md).
+
 Проверено: 2026-09-20.
 
 Цель главы — понять не только «как передать env», а **как построить конфигурационный контракт**, чтобы один image безопасно работал в dev/test/prod.
