@@ -52,6 +52,38 @@ kubectl get events --sort-by=.lastTimestamp
 
 > Сначала сохраняйте evidence, потом restart.
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Использует failure taxonomy для non-functional requirements и runbooks: какой слой отказал, какой user impact, кто owner и какой recovery target.
+
+### Разработчик
+
+Должен давать платформе диагностируемое приложение:
+- structured logs;
+- health endpoints;
+- metrics;
+- meaningful exit/startup failures;
+- finite timeouts.
+
+### Тестировщик
+
+Здесь его ключевая роль — intentionally ломать систему:
+- wrong selector;
+- wrong Secret;
+- DNS deny;
+- resource shortage;
+- bad image;
+- dependency outage;
+- failed rollout.
+
+### Перед следующей главой
+
+Вы должны уметь начать incident не с restart, а с вопроса:
+
+> На каком слое впервые появилось расхождение между desired и actual behavior?
+
 Проверено: 2026-09-20.
 
 Day-1 — «мы смогли deploy». Day-2 — **как система живёт месяцами после deploy**: failures, upgrades, rotations, drains, incidents, restore и troubleshooting.
