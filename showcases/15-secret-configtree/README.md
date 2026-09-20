@@ -1,5 +1,11 @@
 # Showcase 15 — Kubernetes Secret mounted as Spring Boot configtree
 
+## Файлы стенда
+
+- [Подробный walkthrough](WALKTHROUGH.md)
+- [Полный связный manifest](all.yaml)
+- [Общая шпаргалка mapping'ов](../MAPPING-CHEATSHEET.md)
+
 Проверено: 2026-09-20.
 
 ## Схема
