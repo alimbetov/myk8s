@@ -12,6 +12,29 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Git / deployment config
+        |
+        v
+ConfigMap
+        |
+        v
+Pod volume
+        |
+        v
+application.yaml
+        |
+        v
+Spring Environment
+        |
+        v
+@ConfigurationProperties
+```
+
+ConfigMap здесь — **transport конфигурации из Kubernetes в Spring Boot**.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
