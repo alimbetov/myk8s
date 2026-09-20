@@ -1,5 +1,69 @@
 # 11 — HTTP clients: DNS, timeout, retry and connection pool
 
+## Учебная карта темы
+
+### Полный путь одного internal HTTP вызова
+
+```text
+orders-service
+   |
+   | URL http://payment-api:8080
+   v
+DNS lookup
+   ↓
+Service
+   ↓
+EndpointSlice
+   ↓
+Ready payment Pod
+   ↓
+TCP connect
+   ↓
+HTTP request
+   ↓
+Spring controller
+```
+
+### Где timeout'ы разные
+
+```text
+DNS resolution
+connect timeout
+connection-pool acquisition timeout
+TLS handshake
+read/response timeout
+overall deadline
+```
+
+### Annotated Spring config
+
+```yaml
+app:
+  payment-api:
+    base-url: ${PAYMENT_API_URL:http://payment-api:8080}
+    connect-timeout: 1s
+    read-timeout: 3s
+```
+
+### Retry warning
+
+```text
+100 Pods
+× 3 retries
+× dependency outage
+=
+retry storm
+```
+
+Retry должен иметь:
+- bounded attempts;
+- exponential backoff;
+- jitter;
+- idempotency awareness;
+- overall deadline.
+
+Практика: [Service-to-service security](../../showcases/06-service-to-service-security/README.md).
+
 Проверено: 2026-09-20.
 
 Микросервис часто падает не из-за собственного controller, а из-за неправильного client behavior к другому сервису.
