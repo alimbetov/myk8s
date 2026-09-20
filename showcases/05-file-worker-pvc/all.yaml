@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# File worker mounts persistent storage through a PVC.
+# IMPORTANT:
+# - ReadWriteOncePod intentionally constrains this example to one writer Pod.
+# - Pod deletion does not delete the PVC, but PVC persistence is not a backup.
+# - Verify StorageClass/CSI support before using RWOP in your cluster.
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
