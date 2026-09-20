@@ -57,6 +57,42 @@ Authorization -> что caller может делать
 
 Практика: [Showcase 06 — service-to-service security](../../showcases/06-service-to-service-security/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Описывает service contracts через logical names и ports, а не IP. В интеграционной схеме должны быть видны:
+- caller;
+- target Service;
+- protocol/port;
+- namespace;
+- security layer.
+
+### Разработчик
+
+Использует Service DNS в URLs, finite timeouts и readiness-aware design. Не привязывается к Pod IP и не использует localhost для другого workload.
+
+### Тестировщик
+
+Проверяет отдельно:
+- DNS resolve;
+- Service endpoints;
+- port/targetPort;
+- readiness;
+- NetworkPolicy;
+- 401/403 application layer.
+
+### Перед следующей главой
+
+Нужно уметь диагностически разделить:
+
+```text
+DNS problem
+Service selection problem
+network reachability problem
+application authentication problem
+```
+
 Проверено: 2026-09-20.
 
 Эта глава объясняет, **как один Spring Boot service находит другой**, почему Pod IP нельзя считать адресом сервиса и почему NetworkPolicy, TLS и JWT решают разные задачи.
