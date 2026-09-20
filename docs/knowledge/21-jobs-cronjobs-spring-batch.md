@@ -248,6 +248,12 @@ Spring Batch restartability/checkpoint design важнее надежды «Job 
 
 Jobs/CronJobs — важный CKAD primitive. Spring Batch semantics — production/application engineering.
 
+## Связанные production-like примеры
+
+- [CronJob -> Job -> Spring Batch](../../showcases/04-batch-cronjob/README.md)
+
+Для каждого стенда откройте `README.md` → `WALKTHROUGH.md` → `all.yaml`.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/controllers/job/
