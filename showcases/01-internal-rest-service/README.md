@@ -12,6 +12,31 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+External edge
+    |
+    |  здесь НЕ используется
+    v
+[ Cluster internal network ]
+    |
+    v
+SERVICE  ← этот стенд показывает именно этот слой
+    |
+    v
+DEPLOYMENT / PODS
+    |
+    +--> ConfigMap
+    +--> Secret
+    +--> probes
+    |
+    v
+PostgreSQL / other dependencies
+```
+
+Главный смысл: научиться видеть базовую связку **Deployment → Pods → Service → internal DNS**, на которой строятся почти все следующие стенды.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
