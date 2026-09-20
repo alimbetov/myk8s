@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Kubernetes CronJob owns scheduling; Job owns retries/deadline; Spring Batch owns batch semantics.
+# IMPORTANT:
+# - timeZone is explicit for business scheduling.
+# - concurrencyPolicy=Forbid prevents overlapping scheduled runs, not every possible duplicate.
+# - Batch work must still be idempotent/restartable.
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
