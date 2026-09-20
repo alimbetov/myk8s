@@ -2,76 +2,121 @@
 
 Проверено: 2026-09-20.
 
-Этот каталог нужен, чтобы в библиотеке не было ситуации: manifest есть в `examples/`, но подробного объяснения его полей нет.
+Цель каталога — гарантировать, что каждый основной Kubernetes manifest проходит три отдельные итерации и не считается завершённым только потому, что где-то упомянут в тематической главе.
 
-## Статусы
+## Три итерации
 
-- **FULL** — есть отдельный field-by-field reference.
-- **TOPIC** — механизм подробно раскрыт в тематической главе, но отдельный manifest reference ещё нужен.
-- **TODO** — требуется отдельный справочник.
+### I1 — Structure pass
+Сухой проход:
+- назначение;
+- apiVersion/kind;
+- список важных metadata/spec fields;
+- defaults, которые нужно раскрыть;
+- runtime relations;
+- troubleshooting commands;
+- Spring Boot links;
+- CKAD links.
 
-| Manifest | Example | Topic knowledge | Field-by-field reference | Status |
-|---|---|---|---|---|
-| Pod | indirectly via Deployment | 00, 03, 09 | TODO | TODO |
-| Deployment | yes | 03, 19 | TODO | TOPIC |
-| Service | yes | 02, 13 | [Service reference](service.md) | FULL |
-| ConfigMap | yes | 01 | TODO | TOPIC |
-| Secret | template | 01, 17 | TODO | TOPIC |
-| ServiceAccount | yes | 16 | TODO | TOPIC |
-| Role | yes | 16 | TODO | TOPIC |
-| RoleBinding | yes | 16 | TODO | TOPIC |
-| NetworkPolicy | yes | 15 | TODO | TOPIC |
-| PodDisruptionBudget | yes | 03 | TODO | TOPIC |
-| HPA | yes | 20 | TODO | TOPIC |
-| Job | discussed | 21 | TODO | TOPIC |
-| CronJob | yes | 21 | TODO | TOPIC |
-| PVC | discussed | 04 | TODO | TOPIC |
-| StatefulSet | discussed | 04 | TODO | TOPIC |
-| Ingress | discussed | 18 | TODO | TOPIC |
-| Gateway | discussed | 18 | TODO | TOPIC |
-| HTTPRoute | discussed | 18 | TODO | TOPIC |
+### I2 — Full reference
+Полный field-by-field разбор:
+- зачем поле существует;
+- тип/допустимые значения;
+- default;
+- runtime effect;
+- связи с другими objects;
+- минимальный manifest;
+- production manifest;
+- ошибки конфигурации;
+- failure scenarios;
+- диагностика;
+- security/operations.
 
-## Следующий порядок заполнения
+### I3 — Pedagogical refactor
+Учебная переработка:
+- простой язык;
+- как было раньше / как сейчас;
+- схемы процессов;
+- пошаговые примеры;
+- аналогии для Spring Boot разработчика;
+- упражнения;
+- anti-patterns;
+- контрольные вопросы;
+- быстрый incident/runbook режим.
 
-### Core CKAD manifests
+## Coverage
+
+| Manifest | I1 Structure | I2 Full | I3 Pedagogy | File |
+|---|---:|---:|---:|---|
+| Service | DONE | DONE | PARTIAL | [service.md](service.md) |
+| Deployment | DONE | TODO | TODO | [deployment.md](deployment.md) |
+| Pod | DONE | TODO | TODO | [pod.md](pod.md) |
+| ConfigMap | DONE | TODO | TODO | [configmap.md](configmap.md) |
+| Secret | DONE | TODO | TODO | [secret.md](secret.md) |
+| NetworkPolicy | DONE | TODO | TODO | [networkpolicy.md](networkpolicy.md) |
+| ServiceAccount + RBAC | DONE | TODO | TODO | [serviceaccount-rbac.md](serviceaccount-rbac.md) |
+| PersistentVolumeClaim | DONE | TODO | TODO | [pvc.md](pvc.md) |
+| Job + CronJob | DONE | TODO | TODO | [job-cronjob.md](job-cronjob.md) |
+| HorizontalPodAutoscaler | DONE | TODO | TODO | [hpa.md](hpa.md) |
+| Ingress | DONE | TODO | TODO | [ingress.md](ingress.md) |
+
+## Iteration 1 status
+
+**Core manifest coverage is complete for the requested set.**
+
+На этом этапе каждый объект уже имеет отдельную страницу и skeleton полей. Это не означает, что reference завершён: подробная семантика и педагогическая переработка специально отложены на I2/I3, чтобы не смешивать стадии.
+
+## Следующая итерация — I2
+
+Рекомендуемый порядок полного разбора:
 
 1. Deployment
 2. Pod
 3. ConfigMap
 4. Secret
 5. NetworkPolicy
-6. ServiceAccount + Role + RoleBinding
+6. ServiceAccount + Role/ClusterRole + bindings
 7. PVC
 8. Job
 9. CronJob
 10. HPA
 11. Ingress
 
-### Production extensions
+`Job/CronJob` и `ServiceAccount/RBAC` могут остаться в общих файлах, но внутри I2 каждый kind будет разобран отдельно.
 
-12. PDB
-13. StatefulSet
-14. Gateway
-15. HTTPRoute
+## Definition of I2 FULL
 
-## Definition of FULL
+Manifest получает статус I2 FULL только если присутствуют:
 
-Manifest считается полноценно задокументированным только если описаны:
-
-- `apiVersion`;
-- `kind`;
-- metadata;
-- основные `spec` fields;
+- полный minimal example;
+- production-oriented example;
+- разбор каждого существенного поля;
 - defaults;
-- связь с другими resources;
-- runtime effect;
-- Spring Boot connection;
-- minimal example;
-- production example;
-- failure examples;
-- troubleshooting commands;
+- immutable/mutable behavior where relevant;
+- creation/update/runtime sequence;
+- relationship to other Kubernetes resources;
+- Spring Boot usage;
+- security considerations;
+- Day-2 operations;
+- at least 3 failure scenarios;
+- troubleshooting algorithm;
 - anti-patterns;
-- CKAD shortcuts;
+- CKAD commands;
 - production checklist;
-- official sources.
+- official sources with verification date.
 
+## Что пока намеренно не включено в core pass
+
+Это будут следующие manifest tracks после core set:
+
+- PodDisruptionBudget;
+- StatefulSet;
+- PersistentVolume;
+- StorageClass;
+- Gateway;
+- HTTPRoute;
+- Namespace;
+- ResourceQuota;
+- LimitRange;
+- DaemonSet.
+
+Они уже упоминаются в тематических главах, но пройдут тот же I1 → I2 → I3 pipeline отдельно.
