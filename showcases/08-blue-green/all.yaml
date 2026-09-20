@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Blue and green are two complete application slots.
+# IMPORTANT:
+# - The production Service must select exactly one color.
+# - A selector that only matches app=orders would mix both versions.
+# - DB/event contracts must remain compatible while both colors exist.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
