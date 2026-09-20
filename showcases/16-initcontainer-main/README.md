@@ -12,6 +12,24 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Pod lifecycle
+   |
+   +--> initContainer
+   |       |
+   |       v
+   |   preparation
+   |
+   +--> main container
+           |
+           v
+       Spring Boot
+```
+
+initContainer находится **до main container внутри одного Pod lifecycle** и используется для одноразовой подготовки.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
