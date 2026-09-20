@@ -1,3 +1,10 @@
+# EDUCATIONAL PRODUCTION-LIKE EXAMPLE
+# Requires Strimzi CRDs/operator.
+# IMPORTANT:
+# - Applications connect to event-bus-kafka-bootstrap, not broker Pod names.
+# - partitions control useful consumer parallelism.
+# - persistent storage lifecycle (deleteClaim) is a production/DR decision.
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
 metadata:
