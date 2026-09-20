@@ -281,6 +281,13 @@ kubectl get events --sort-by=.lastTimestamp
 
 Must know PVC create, accessModes, storage request, volumeMode basics, Pod mount, Pending/Bound diagnostics.
 
+## Production-like examples
+
+- [PVC mounted by file worker](../../../showcases/05-file-worker-pvc/README.md)
+- [Per-Pod PVC through volumeClaimTemplates](../../../showcases/18-statefulset-headless-service/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/storage/persistent-volumes/
