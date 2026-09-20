@@ -273,6 +273,13 @@ build
 
 RollingUpdate, image update, rollout history/undo — CKAD. Blue/green/canary/progressive delivery — production extension.
 
+## Связанные production-like примеры
+
+- [Blue/Green selector cutover](../../showcases/08-blue-green/README.md)
+- [Canary weighted routing](../../showcases/09-canary/README.md)
+
+Для каждого стенда откройте `README.md` → `WALKTHROUGH.md` → `all.yaml`.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
