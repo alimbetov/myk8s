@@ -50,6 +50,35 @@ automountServiceAccountToken: false
 
 > Не давайте `get/list/watch secrets` только потому, что Pod использует Secret injection.
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Должен понимать, когда приложение вообще нуждается в Kubernetes API. Это отдельный integration contract с platform API.
+
+### Разработчик
+
+Использует dedicated ServiceAccount и минимальные verbs/resources. Если API access не нужен — отключает token automount.
+
+### Тестировщик
+
+Проверяет:
+- allowed action;
+- forbidden action;
+- namespace boundary;
+- accidental Secret access;
+- отсутствие token там, где он не нужен.
+
+### Перед следующей главой
+
+Нужно различать:
+
+```text
+ServiceAccount identity
+RBAC permission
+application user/service identity
+```
+
 Проверено: 2026-09-20.
 
 ServiceAccount и RBAC нужны, когда workload взаимодействует с Kubernetes API. Обычному Spring Boot API это часто вообще не требуется.
