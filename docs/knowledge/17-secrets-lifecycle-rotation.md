@@ -208,6 +208,13 @@ Backup of Kubernetes/etcd/secret manager содержит secrets и требу�
 
 Secret creation/consumption — CKAD. Encryption, external managers, rotation/audit — production.
 
+## Связанные production-like примеры
+
+- [Database credentials](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+- [Secret mounted as Spring configtree](../../showcases/15-secret-configtree/README.md)
+
+Для каждого стенда откройте `README.md` → `WALKTHROUGH.md` → `all.yaml`.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/configuration/secret/
