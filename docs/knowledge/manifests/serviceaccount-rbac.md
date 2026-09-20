@@ -1,5 +1,70 @@
 # Manifest Reference — ServiceAccount + RBAC
 
+## Учебная схема объекта
+
+### Как workload получает права Kubernetes API
+
+```text
+Pod
+ |
+ | serviceAccountName
+ v
+ServiceAccount
+ |
+ v
+RoleBinding / ClusterRoleBinding
+ |
+ v
+Role / ClusterRole
+ |
+ v
+allowed API verbs/resources
+```
+
+### Annotated fragment
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: orders
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: orders-reader
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get"]       # least privilege
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: orders-reader
+subjects:
+  - kind: ServiceAccount
+    name: orders
+roleRef:
+  kind: Role
+  name: orders-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### Важно
+
+```text
+ServiceAccount/RBAC
+=
+Kubernetes API authorization
+
+не
+=
+Spring Boot service authentication
+```
+
+Если API access не нужен, рассмотрите `automountServiceAccountToken: false`.
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
