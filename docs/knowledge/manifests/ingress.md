@@ -1,5 +1,68 @@
 # Manifest Reference — Ingress
 
+## Учебная схема объекта
+
+### Где Ingress находится в request path
+
+```text
+Internet
+   |
+   v
+Ingress Controller
+   |
+   v
+Ingress rules
+   |
+   v
+Service
+   |
+   v
+Ready Pods
+```
+
+Ingress object — это **routing configuration**, а controller — реальный data plane/control implementation.
+
+### Annotated fragment
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders
+
+spec:
+  ingressClassName: traefik   # must match installed controller
+
+  rules:
+    - host: api.example.kz
+      http:
+        paths:
+          - path: /orders
+            pathType: Prefix
+
+            backend:
+              service:
+                name: orders-api   # Service metadata.name
+                port:
+                  name: http       # Service port name
+```
+
+### Диагностическая цепочка
+
+```text
+IngressClass/controller?
+   ↓
+Ingress rule?
+   ↓
+Service?
+   ↓
+EndpointSlice?
+   ↓
+Pod readiness?
+```
+
+Практика: [Ingress + TLS](../../../showcases/02-public-api-ingress-tls/annotated.yaml), [Gateway API](../../../showcases/07-gateway-microservices/annotated.yaml).
+
 Проверено: 2026-09-20. Kubernetes baseline: 1.37.
 
 Статус: **I2 FULL TECHNICAL REFERENCE**.
