@@ -382,6 +382,14 @@ Know:
 - TLS reference;
 - describe/debug.
 
+## Production-like examples
+
+- [Ingress + TLS + Service](../../../showcases/02-public-api-ingress-tls/README.md)
+- [Gateway API comparison](../../../showcases/07-gateway-microservices/README.md)
+- [Weighted Gateway canary](../../../showcases/09-canary/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/services-networking/ingress/
