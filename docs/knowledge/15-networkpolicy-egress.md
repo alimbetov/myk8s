@@ -47,6 +47,36 @@ spec:
 
 Практика: [Showcase 03](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Должен уметь описать allowed communication matrix:
+- кто может вызывать кого;
+- на какой port/protocol;
+- какие external endpoints обязательны;
+- нужен ли DNS/OIDC/telemetry egress.
+
+### Разработчик
+
+Не должен воспринимать NetworkPolicy как замену JWT/TLS. Нужно заранее знать все outbound dependencies приложения и не полагаться на unrestricted egress.
+
+### Тестировщик
+
+Проверяет:
+- default deny;
+- DNS после deny;
+- разрешённый path;
+- запрещённый path;
+- selector mistakes;
+- cross-namespace behavior.
+
+### Перед следующей главой
+
+Нужно уметь ответить:
+
+> Какой сетевой flow должен быть разрешён, и какой application-level контроль всё равно остаётся поверх него?
+
 Проверено: 2026-09-20.
 
 NetworkPolicy нужна не для authentication, а для ограничения network reachability.
