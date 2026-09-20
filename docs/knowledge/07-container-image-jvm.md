@@ -61,6 +61,45 @@ containers:
 
 Практика: [Showcase 01 annotated.yaml](../../showcases/01-internal-rest-service/annotated.yaml).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Должен понимать, что container image — это поставляемая версия приложения. В требованиях полезно явно разделять:
+- application version;
+- runtime configuration;
+- platform dependencies;
+- rollout/rollback criteria.
+
+### Разработчик
+
+Отвечает за:
+- reproducible image;
+- correct ENTRYPOINT/signal handling;
+- non-root runtime;
+- CA/timezone/native library requirements;
+- отсутствие secrets и mutable business data внутри image.
+
+### Тестировщик
+
+Проверяет:
+- image pull;
+- startup command;
+- immutable version/tag;
+- SIGTERM;
+- read-only/non-root assumptions;
+- поведение при отсутствующей runtime configuration.
+
+### Перед следующей главой
+
+Должно быть понятно:
+
+```text
+image = immutable package
+config = runtime input
+Pod = runtime instance
+```
+
 Проверено: 2026-09-20.
 
 Цель главы — понять, что именно Kubernetes запускает, как Spring Boot превращается в OCI image, почему Pod нельзя воспринимать как маленькую VM и какие решения в image напрямую влияют на graceful shutdown, security, startup и эксплуатацию.
