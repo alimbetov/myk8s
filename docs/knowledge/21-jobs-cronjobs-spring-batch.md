@@ -45,6 +45,38 @@ jobTemplate:
 
 Практика: [Showcase 04](../../showcases/04-batch-cronjob/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Фиксирует schedule, timezone, overlap policy, deadline, retry и business idempotency.
+
+### Разработчик
+
+Разделяет Kubernetes Job retry и Spring Batch restartability/checkpoints.
+
+### Тестировщик
+
+Проверяет:
+- duplicate execution;
+- overlap;
+- missed schedule;
+- non-zero exit;
+- retry;
+- timeout;
+- manual rerun.
+
+### Перед следующей главой
+
+Нужно уметь различать:
+
+```text
+schedule
+execution retry
+business restartability
+idempotency
+```
+
 Проверено: 2026-09-20.
 
 Не каждое Spring Boot приложение должно работать вечно. Batch task лучше моделировать как завершённую работу.
