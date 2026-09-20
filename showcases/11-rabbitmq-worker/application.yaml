@@ -1,0 +1,11 @@
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbit-main}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    connection-timeout: 3s
+
+app:
+  queue:
+    name: ${WORK_QUEUE:document-generation}
