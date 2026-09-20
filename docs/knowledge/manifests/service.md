@@ -1336,3 +1336,11 @@ appProtocol
   Использовано: Service DNS model.
 
 Проверено: **2026-09-20**.
+
+## Production-like examples
+
+- [ClusterIP internal service](../../../showcases/01-internal-rest-service/README.md)
+- [Service selector cutover](../../../showcases/08-blue-green/README.md)
+- [Headless Service](../../../showcases/18-statefulset-headless-service/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
