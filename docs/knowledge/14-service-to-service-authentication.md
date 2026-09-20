@@ -210,6 +210,12 @@ Expected:
 
 Application authentication почти выходит за CKAD. Экзамен ближе к ServiceAccount/Secret/NetworkPolicy. Production требует OAuth2/mTLS/identity architecture.
 
+## Связанные production-like примеры
+
+- [NetworkPolicy + OAuth2/JWT layers](../../showcases/06-service-to-service-security/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/
