@@ -1,82 +1,113 @@
-# Production knowledge library — expansion roadmap
+# Production knowledge library — roadmap
 
 Проверено: 2026-09-20.
 
-Цель — последовательно превратить каждый research prompt в законченный production module по quality gate из master prompt.
-
-## Wave 1 — Spring Boot workload foundation
+## Wave 1 — Foundation — DONE
 
 - [x] platform mental model
-- [x] ConfigMap/Secret + Spring external config
-- [x] Service/DNS basics
-- [x] probes/resources/rollout baseline
-- [x] first troubleshooting lab
-- [ ] container image and JVM ergonomics
-- [ ] requests/limits/GC/native memory deep dive
-- [ ] graceful shutdown for HTTP, Kafka and Rabbit consumers
-- [ ] Jobs/CronJobs for Spring Batch
-- [ ] autoscaling: HPA/VPA/KEDA trade-offs
+- [x] configuration and secrets baseline
+- [x] Services/DNS/security baseline
+- [x] Deployments/probes/rollouts
+- [x] stateful overview
+- [x] Day-2 troubleshooting
+- [x] CKAD map
 
-## Wave 2 — Networking and security
+## Wave 2 — Spring Boot workload foundation — DONE
 
-- [ ] ingress vs Gateway API
-- [ ] TLS termination patterns
-- [ ] OAuth2/JWT resource server in Kubernetes
-- [ ] workload identity and mTLS
-- [ ] ServiceAccount/RBAC deep dive
-- [ ] Pod Security Standards / SecurityContext / seccomp
-- [ ] default-deny ingress+egress policy with DNS
-- [ ] egress control and external dependencies
-- [ ] secret managers / CSI / rotation runbooks
+- [x] container image + JVM
+- [x] resources/JVM memory/CPU
+- [x] probes and Spring lifecycle
+- [x] graceful shutdown
+- [x] HTTP clients/timeouts/retries/pools
+- [x] PostgreSQL/Hikari connectivity
 
-## Wave 3 — Stateful platform
+## Wave 3 — Networking and security foundation — DONE
 
-- [ ] PostgreSQL: managed vs CloudNativePG vs manual
-- [ ] PostgreSQL backup/restore/PITR lab
-- [ ] Kafka with Strimzi
-- [ ] RabbitMQ Cluster Operator
-- [ ] object storage: S3-compatible/RustFS/MinIO patterns
-- [ ] PVC/PV/StorageClass/CSI deep dive
-- [ ] capacity, PDB, affinity and topology
-- [ ] RPO/RTO and disaster-recovery drills
+- [x] Service discovery / internal services
+- [x] service-to-service authentication
+- [x] NetworkPolicy and egress
+- [x] ServiceAccount/RBAC
+- [x] secrets lifecycle/rotation
+- [x] Ingress/Gateway API/TLS
 
-## Wave 4 — Delivery and operations
+## Wave 4 — Delivery and operations foundation — DONE
 
-- [ ] RollingUpdate deep dive
-- [ ] blue/green
-- [ ] canary
+- [x] deployment strategies
+- [x] HPA/autoscaling
+- [x] Jobs/CronJobs/Spring Batch
+- [x] observability
+
+## Wave 5 — Deep stateful track — NEXT
+
+Каждый продукт получает отдельный набор production chapters, labs и manifests.
+
+### PostgreSQL
+- [ ] PostgreSQL architecture in Kubernetes
+- [ ] CloudNativePG
+- [ ] replication/failover
+- [ ] backup/restore/PITR
+- [ ] storage/capacity
+- [ ] upgrades
+- [ ] disaster recovery
+- [ ] troubleshooting lab
+
+### Kafka
+- [ ] Kafka architecture refresher
+- [ ] Strimzi
+- [ ] KRaft/controller quorum
+- [ ] replication/ISR
+- [ ] storage/capacity
+- [ ] upgrades
+- [ ] security
+- [ ] failure lab
+
+### RabbitMQ
+- [ ] RabbitMQ architecture refresher
+- [ ] Cluster Operator
+- [ ] quorum queues
+- [ ] disk/memory alarms
+- [ ] persistence
+- [ ] upgrades
+- [ ] security
+- [ ] failure lab
+
+### Object storage
+- [ ] S3 model
+- [ ] MinIO/RustFS patterns
+- [ ] Spring Boot client
+- [ ] presigned upload/download
+- [ ] retention
+- [ ] backup/DR
+
+## Wave 6 — Platform engineering deep dive
+
 - [ ] Helm
 - [ ] Kustomize
 - [ ] GitOps
-- [ ] schema migration expand/contract
-- [ ] observability: metrics/logs/traces
-- [ ] SLO/SLI/error budget
-- [ ] incident runbooks
-- [ ] node drain/storage failure/full disk labs
+- [ ] namespaces/quotas/LimitRange
+- [ ] scheduling/taints/tolerations
+- [ ] affinity/topology spread
+- [ ] PDB deep dive
+- [ ] VPA/KEDA
+- [ ] Pod Security Standards
+- [ ] policy engines
+- [ ] multi-cluster/DR
 
-## Wave 5 — CKAD track
+## Definition of done
 
-CKAD current published domains:
-- Application Design and Build — 20%
-- Application Deployment — 20%
-- Application Observability and Maintenance — 15%
-- Application Environment, Configuration and Security — 25%
-- Services and Networking — 20%
-
-Для каждой production topic создается отдельный exam-speed exercise.
-
-## Definition of done for each module
-
-Модуль не считается законченным без:
+Модуль считается законченным, когда содержит:
 - mental model;
+- как было раньше / как сейчас;
 - Spring Boot example;
-- minimal + production Kubernetes manifests;
+- minimal + production Kubernetes example;
+- почему выбран каждый важный parameter;
+- defaults;
 - security;
 - operations;
-- failure modes;
+- failure scenarios;
 - troubleshooting;
 - anti-patterns;
-- developer/platform responsibility matrix;
+- responsibility matrix;
 - CKAD mapping;
-- hands-on lab;
-- official sources and verification date.
+- hands-on practice;
+- official sources с датой проверки.
