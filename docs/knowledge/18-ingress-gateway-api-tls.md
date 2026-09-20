@@ -59,6 +59,43 @@ backend:
 
 Практика: [Ingress + TLS](../../showcases/02-public-api-ingress-tls/README.md) и [Gateway API](../../showcases/07-gateway-microservices/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Описывает external API entry contract:
+- hostname;
+- path;
+- protocol/TLS;
+- authentication;
+- timeout/body constraints;
+- ownership Gateway/Route.
+
+### Разработчик
+
+Понимает reverse-proxy boundary, forwarded headers, backend Service mapping и controller-specific extensions.
+
+### Тестировщик
+
+Проверяет:
+- DNS/host;
+- TLS certificate;
+- route match;
+- wrong backend;
+- no ready endpoints;
+- redirects;
+- request size/timeouts where configured.
+
+### Перед следующей главой
+
+Нужно видеть request path:
+
+```text
+Internet -> edge controller -> route -> Service -> Ready Pod
+```
+
+и понимать, на каком слое возникла ошибка.
+
 Проверено: 2026-09-20.
 
 Эта глава про входящий traffic извне cluster и границу между application routing и platform ingress infrastructure.
