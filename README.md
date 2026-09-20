@@ -48,6 +48,13 @@ Production-oriented Kubernetes knowledge base для Spring Boot-разрабо�
 - Jobs/CronJobs/Spring Batch;
 - observability.
 
+## Architecture showcases
+
+- [Production-like service stands](showcases/README.md)
+- [Manifest mapping cheat sheet](showcases/MAPPING-CHEATSHEET.md)
+
+Showcases демонстрируют не отдельный YAML object, а полную композицию нескольких ресурсов: Deployment, Service, ConfigMap, Secret, NetworkPolicy, HPA, Ingress, PVC и CronJob.
+
 ## Hands-on labs
 
 - [Lab 01 — Spring Boot baseline](labs/01-spring-boot-baseline/README.md)
