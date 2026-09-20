@@ -82,3 +82,110 @@ Stateful chapter обязан объяснять:
 ## Правило терминологии
 
 В тексте разрешено оставлять Kubernetes/Java термины на английском, когда перевод делает понятие менее точным: Pod, Deployment, rollout, readiness, liveness, Secret, Service, operator, failover, pool, timeout.
+
+
+## Textbook-first rule
+
+Каждая новая knowledge-глава должна начинаться с педагогического слоя до глубокого technical reference.
+
+Обязательный порядок:
+
+```text
+1. Место темы в общей Kubernetes-системе
+2. Схема объектов и связей
+3. Runtime sequence
+4. Annotated manifest / Spring fragment
+5. Только затем подробная теория и field-by-field details
+6. Ссылка на production-like showcase
+7. Failure scenarios / troubleshooting
+```
+
+### Context diagram
+
+Глава должна отвечать:
+
+> Где этот механизм находится относительно Deployment, Pod, Service, Spring Boot и dependencies?
+
+Пример:
+
+```text
+Internet
+   ↓
+Gateway
+   ↓
+Service
+   ↓
+Pod
+   ↓
+Spring Boot
+   ↓
+PostgreSQL
+```
+
+Из схемы выделяется именно та часть, которой посвящена глава.
+
+### Object relationship diagram
+
+Показывает конкретные Kubernetes mappings:
+
+```text
+Service.selector
+      =
+Pod.labels
+
+Service.targetPort
+      =
+containerPort.name
+```
+
+### Runtime diagram
+
+Обязателен для lifecycle mechanisms:
+
+```text
+readiness success
+   ↓
+Pod Ready=True
+   ↓
+EndpointSlice ready=true
+   ↓
+Service sends traffic
+```
+
+### Annotated manifests
+
+У каждого крупного showcase должны существовать два варианта:
+
+- `annotated.yaml` — учебный YAML с объясняющими комментариями;
+- `all.yaml` — чистый apply-ready reference.
+
+Комментарии в `annotated.yaml` должны объяснять:
+- зачем поле;
+- с чем связано;
+- runtime effect;
+- production caveat;
+- типичную ошибку.
+
+Не превращать `all.yaml` в длинный учебник: чистый вариант нужен для практики.
+
+### Attention markers
+
+В prose и comments использовать явно:
+
+- **ВАЖНО** — ключевой invariant;
+- **ОСТОРОЖНО** — настройка с опасным побочным эффектом;
+- **PRODUCTION** — что обязательно переосмыслить вне lab;
+- **НЕ ПУТАТЬ** — похожие, но разные concepts;
+- **ПРОВЕРКА** — kubectl/application verification.
+
+### Quality test
+
+Материал не считается педагогически готовым, если читатель после раздела не может ответить:
+
+1. Где этот объект расположен в общей архитектуре?
+2. С какими ресурсами он связан?
+3. Какими полями происходит mapping?
+4. Что происходит после `kubectl apply`?
+5. Что сломается при неправильной настройке?
+6. Как это проявится в Spring Boot?
+7. Как это проверить командами?
