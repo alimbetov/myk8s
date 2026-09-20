@@ -1,5 +1,60 @@
 # 06 — CKAD map vs production engineering
 
+## Учебная карта темы
+
+### CKAD и production — не одно и то же
+
+```text
+Production understanding
+      |
+      +--> why / failure semantics / security / ops
+      |
+      v
+CKAD implementation speed
+      |
+      +--> create
+      +--> edit
+      +--> inspect
+      +--> diagnose
+```
+
+Экзаменационная задача часто заканчивается на:
+
+```text
+manifest syntactically correct + expected behavior
+```
+
+Production начинается дальше:
+
+```text
+security
+observability
+capacity
+backup
+rollout compatibility
+failure recovery
+```
+
+### Метод тренировки
+
+```text
+объяснить механизм
+   ↓
+написать minimal YAML
+   ↓
+написать production variant
+   ↓
+сломать
+   ↓
+диагностировать
+   ↓
+исправить
+   ↓
+повторить на скорость
+```
+
+Используйте [manifest references](manifests/README.md), затем [showcases](../../showcases/README.md), затем labs.
+
 Проверено: 2026-09-20.
 
 Цель CKAD-трека проекта — не выучить отдельный набор экзаменационных трюков, а использовать экзамен как **скоростную практику Kubernetes application primitives**, не смешивая её с полной production architecture.
