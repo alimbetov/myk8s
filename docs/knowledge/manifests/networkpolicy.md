@@ -291,6 +291,13 @@ kubectl exec <debug> -- curl -v <url>
 
 Must know podSelector, namespaceSelector, ingress/egress, policyTypes, ports, default deny.
 
+## Production-like examples
+
+- [Egress isolation](../../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+- [Service-to-service ingress allow-list](../../../showcases/06-service-to-service-security/README.md)
+
+Каждый showcase содержит `WALKTHROUGH.md` с разбором mapping'ов и `all.yaml` с полной композицией.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/services-networking/network-policies/
