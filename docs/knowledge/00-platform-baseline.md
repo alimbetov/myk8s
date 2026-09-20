@@ -1,5 +1,81 @@
 # 00 — Platform baseline: Spring Boot application in Kubernetes
 
+## Учебная карта темы
+
+### Где Kubernetes находится относительно Spring Boot
+
+```text
+Developer
+   |
+   | builds image
+   v
+Container Registry
+   |
+   v
+Kubernetes
+   |
+   +--> Deployment
+   |      |
+   |      v
+   |     Pods
+   |
+   +--> Service
+   |      |
+   |      v
+   |   stable DNS
+   |
+   +--> ConfigMap / Secret
+   |
+   +--> NetworkPolicy
+   |
+   +--> PVC / external stateful systems
+   |
+   v
+Spring Boot process
+```
+
+Главная смена мышления: **мы больше не администрируем конкретный JVM process как “вечный сервер”**. Мы описываем desired state, а Kubernetes постоянно пытается привести cluster к нему.
+
+### Как читать следующие главы
+
+```text
+Image
+  ↓
+Pod
+  ↓
+Deployment
+  ↓
+Service/DNS
+  ↓
+Config/Secret
+  ↓
+Security
+  ↓
+Stateful dependencies
+  ↓
+Operations
+```
+
+### Мини-пример
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+spec:
+  replicas: 2              # desired state: хотим два экземпляра
+  template:
+    spec:
+      containers:
+        - name: app
+          image: registry/orders:1.0.0
+```
+
+Здесь Kubernetes не “запускает приложение один раз”. Controller постоянно проверяет: **есть ли два подходящих Pod?** Если один исчез — создаётся replacement.
+
+> **Смотрите также:** [Showcase 01 — internal REST service](../../showcases/01-internal-rest-service/README.md) → [annotated manifest](../../showcases/01-internal-rest-service/annotated.yaml).
+
 Проверено: 2026-09-20.
 
 Эта глава строит общую mental model. Если понять её, остальные Kubernetes objects перестают выглядеть как набор несвязанных YAML.
