@@ -76,6 +76,39 @@ total cluster + DB/client pressure
 
 Практика: [REST + HPA + PostgreSQL](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Переводит требования по нагрузке и SLA в measurable capacity assumptions: expected concurrency, response time, scale range и ограничения downstream.
+
+### Разработчик
+
+Понимает JVM memory budget и измеряет requests/limits вместо случайных значений. Связывает CPU request с HPA и replica count с connection pools.
+
+### Тестировщик
+
+Проверяет:
+- Pending из-за ресурсов;
+- OOMKilled;
+- CPU throttling;
+- startup под limit;
+- поведение при HPA scale;
+- capacity degradation before hard failure.
+
+### Перед следующей главой
+
+Нужно уметь объяснить разницу:
+
+```text
+CPU request
+CPU limit
+memory request
+memory limit
+JVM heap
+process RSS
+```
+
 Проверено: 2026-09-20.
 
 Resources — это договор между приложением, scheduler и Linux cgroups. Для Java это особенно важно: JVM heap — лишь часть container memory.
