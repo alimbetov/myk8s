@@ -219,6 +219,13 @@ Drain использует eviction/termination lifecycle. Поэтому shutdo
 - long operations externalized where appropriate;
 - rollout/drain tested.
 
+## Связанные production-like примеры
+
+- [Batch termination semantics](../../showcases/04-batch-cronjob/README.md)
+- [RabbitMQ worker graceful consumer shutdown](../../showcases/11-rabbitmq-worker/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
