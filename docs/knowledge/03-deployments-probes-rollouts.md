@@ -54,6 +54,48 @@ strategy:
 
 Смотрите [Blue/Green](../../showcases/08-blue-green/README.md) и [Canary](../../showcases/09-canary/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Должен понимать, что “обновление сервиса” — это период coexistence старой и новой версии. Требования к zero downtime должны учитывать:
+- capacity;
+- readiness;
+- DB/message compatibility;
+- rollback boundaries.
+
+### Разработчик
+
+Настраивает:
+- startup/liveness/readiness по разным смыслам;
+- graceful lifecycle;
+- resources;
+- rollout-safe schema changes;
+- immutable image revisions.
+
+### Тестировщик
+
+Проверяет:
+- rollout без потери available replicas;
+- bad image;
+- readiness failure новой версии;
+- rollback;
+- slow startup;
+- несовместимость schema/version.
+
+### Перед следующей главой
+
+Вы должны объяснить:
+
+```text
+change spec.template
+ -> new ReplicaSet
+ -> new Pods
+ -> readiness
+ -> traffic
+ -> old Pods removed
+```
+
 Проверено: 2026-09-20.
 
 Этот раздел объясняет не только **что написать в Deployment**, но и **какой процесс запускает каждое поле, почему оно существует и что в этот момент происходит со Spring Boot приложением**.
