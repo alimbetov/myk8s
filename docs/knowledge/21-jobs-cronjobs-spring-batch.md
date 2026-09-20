@@ -1,5 +1,50 @@
 # 21 — Jobs / CronJobs / Spring Batch
 
+## Учебная карта темы
+
+### Кто за что отвечает
+
+```text
+CronJob
+  -> schedule
+
+Job
+  -> completion / retry / deadline
+
+Pod
+  -> process execution
+
+Spring Batch
+  -> steps / chunks / checkpoints / business restartability
+```
+
+### Почему не всегда @Scheduled
+
+```text
+Deployment replicas=4
+   ↓
+@Scheduled in each JVM
+   ↓
+potential 4 executions
+```
+
+CronJob централизует scheduling, но idempotency всё равно остаётся application responsibility.
+
+### Annotated fragment
+
+```yaml
+schedule: "0 2 * * *"
+timeZone: Asia/Almaty
+concurrencyPolicy: Forbid
+
+jobTemplate:
+  spec:
+    backoffLimit: 2
+    activeDeadlineSeconds: 3600
+```
+
+Практика: [Showcase 04](../../showcases/04-batch-cronjob/README.md).
+
 Проверено: 2026-09-20.
 
 Не каждое Spring Boot приложение должно работать вечно. Batch task лучше моделировать как завершённую работу.
