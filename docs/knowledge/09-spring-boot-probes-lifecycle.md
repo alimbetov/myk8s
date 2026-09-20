@@ -53,6 +53,32 @@ readinessProbe:
 
 Практика: [Showcase 01](../../showcases/01-internal-rest-service/README.md).
 
+## Для аналитика, разработчика и тестировщика
+
+### Аналитик
+
+Определяет, что означает “сервис готов” с точки зрения user flow, но не превращает каждую внешнюю dependency в liveness requirement.
+
+### Разработчик
+
+Разделяет startup, liveness и readiness endpoints по смыслу и не использует один “универсальный health” без анализа последствий.
+
+### Тестировщик
+
+Проверяет:
+- slow startup;
+- dead process;
+- temporary NotReady;
+- dependency outage;
+- EndpointSlice removal;
+- recovery без unnecessary restart.
+
+### Перед следующей главой
+
+Вы должны уметь ответить:
+
+> В каком случае Pod должен быть перезапущен, а в каком достаточно временно убрать его из traffic?
+
 Проверено: 2026-09-20.
 
 Probe — это не просто URL в YAML. Это контракт между kubelet, Spring Boot и Service о состоянии процесса.
