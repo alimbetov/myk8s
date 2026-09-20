@@ -12,6 +12,29 @@
 
 > **Учебный принцип:** сначала понять роль объекта в общей системе, затем его поля, затем runtime behavior. Не начинайте с копирования YAML.
 
+## Место этого стенда в общей системе
+
+```text
+Deployment / Pod
+      |
+      v
+volumeMount
+      |
+      v
+PVC       ← application requests storage here
+      |
+      v
+PV
+      |
+      v
+StorageClass / CSI
+      |
+      v
+physical storage
+```
+
+PVC находится **ниже Pod**, а не внутри Spring Boot. Приложение видит обычный filesystem path, а Kubernetes связывает его с storage backend.
+
 ## Файлы стенда
 
 - [Подробный walkthrough](WALKTHROUGH.md)
