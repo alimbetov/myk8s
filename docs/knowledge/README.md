@@ -1,5 +1,13 @@
 # Kubernetes Production Knowledge Library
 
+## Начать обучение
+
+- [Как учиться по myk8s: аналитик, разработчик, тестировщик](LEARNING-GUIDE.md)
+- [Kubernetes + Spring Boot glossary](GLOSSARY.md)
+- [Documentation conventions](CONVENTIONS.md)
+
+Если вы впервые открыли проект, начните с `LEARNING-GUIDE.md`, затем переходите к главе 00.
+
 ## Как теперь устроен учебник
 
 Каждая основная тема читается в одном направлении:
@@ -134,3 +142,35 @@ symptom
 ```
 
 Главный принцип: Kubernetes изучается через эксплуатационный контракт реального Spring Boot приложения, а не как набор YAML API.
+
+
+## I3 quality coverage
+
+Редакторский I3-pass проверяет не только техническую полноту, но и обучаемость.
+
+| Диапазон | Учебная карта | Роли analyst/dev/tester | Runtime/failure thinking | Production-like examples |
+|---|---:|---:|---:|---:|
+| 00–06 foundation | DONE | DONE | DONE | DONE |
+| 07–12 workload/runtime | DONE | DONE | DONE | DONE |
+| 13–18 networking/security/edge | DONE | DONE | DONE | DONE |
+| 19–22 delivery/operations | DONE | DONE | DONE | DONE |
+
+### Что означает DONE
+
+Глава должна позволять ответить без заучивания YAML:
+
+```text
+Почему механизм существует?
+Где он находится в общей архитектуре?
+Кто его исполняет?
+С чем он связан?
+Какими полями связаны objects?
+Что происходит runtime?
+Как failure проявится в Spring Boot?
+Как это проверить?
+Что важно аналитику?
+Что важно разработчику?
+Что важно тестировщику?
+```
+
+Следующий редакторский уровень — проход по тексту на локальные разрывы объяснения: undefined terminology, слишком резкие переходы, примеры без причинно-следственной связи и недостаточно подробные failure narratives.
