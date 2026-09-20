@@ -1,5 +1,51 @@
 # 04 — Stateful dependencies: PostgreSQL, Kafka, RabbitMQ and storage
 
+## Учебная карта темы
+
+### Где живёт state
+
+```text
+Spring Boot Pod
+    |
+    +--> PostgreSQL Service --> operator-managed DB cluster
+    |
+    +--> Kafka bootstrap ----> operator-managed Kafka
+    |
+    +--> RabbitMQ Service ---> operator-managed RabbitMQ
+    |
+    +--> S3 endpoint --------> object storage
+    |
+    +--> PVC ----------------> PV/CSI storage
+```
+
+Главная идея: **Pod disposable, business state — нет**.
+
+### StatefulSet и Operator — разные уровни
+
+```text
+StatefulSet
+  -> stable name
+  -> stable storage
+  -> ordering
+
+Operator
+  -> product replication
+  -> role management
+  -> failover
+  -> upgrades
+  -> backup integration
+```
+
+Поэтому:
+
+```text
+StatefulSet != PostgreSQL HA
+StatefulSet != Kafka cluster management
+StatefulSet != RabbitMQ quorum
+```
+
+Смотрите: [CloudNativePG](../../showcases/12-cloudnativepg-primary-replicas/README.md), [Kafka/Strimzi](../../showcases/10-kafka-producer-consumer/README.md), [RabbitMQ](../../showcases/11-rabbitmq-worker/README.md), [StatefulSet](../../showcases/18-statefulset-headless-service/README.md).
+
 Проверено: 2026-09-20.
 
 Эта глава объясняет, почему «запустить PostgreSQL в Kubernetes» и «эксплуатировать PostgreSQL production-grade» — совершенно разные задачи.
