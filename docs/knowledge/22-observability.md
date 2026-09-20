@@ -1,5 +1,62 @@
 # 22 — Observability: metrics, logs, traces and Kubernetes signals
 
+## Учебная карта темы
+
+### Что нужно видеть одновременно
+
+```text
+User request
+   |
+   +--> logs
+   +--> metrics
+   +--> traces
+   |
+   v
+Spring Boot
+   |
+   +--> JVM
+   +--> DB pool
+   +--> HTTP clients
+   +--> Kafka/Rabbit
+   |
+   v
+Kubernetes
+   +--> Pod state
+   +--> probes
+   +--> restarts
+   +--> resource usage
+```
+
+### RED для HTTP
+
+```text
+Rate
+Errors
+Duration
+```
+
+### Stateful product signals
+
+```text
+PostgreSQL -> connections / locks / latency
+Kafka      -> consumer lag / ISR
+RabbitMQ   -> queue depth / unacked / alarms
+PVC        -> capacity
+```
+
+### Incident correlation
+
+```text
+Deployment revision
+ + Pod name
+ + version
+ + traceId
+ + dependency
+ = useful diagnosis
+```
+
+Практика: [native telemetry sidecar](../../showcases/17-native-sidecar/README.md), [Kafka](../../showcases/10-kafka-producer-consumer/README.md), [RabbitMQ](../../showcases/11-rabbitmq-worker/README.md).
+
 Проверено: 2026-09-20.
 
 Observability нужна, чтобы по внешним signals понять внутреннее состояние distributed system. В Kubernetes одного `kubectl logs` недостаточно.
