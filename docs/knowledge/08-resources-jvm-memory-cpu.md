@@ -306,6 +306,13 @@ maxSurge: 2
 - pool/concurrency соответствуют downstream;
 - OOM runbook есть.
 
+## Связанные production-like примеры
+
+- [REST + HPA — CPU request as autoscaling denominator](../../showcases/03-rest-postgres-hpa-networkpolicy/README.md)
+- [Sidecar — Pod resource footprint](../../showcases/17-native-sidecar/README.md)
+
+В каждом showcase откройте `README.md`, затем `WALKTHROUGH.md` и `all.yaml`: теория этой главы там показана как часть связной архитектуры.
+
 ## Sources
 
 - https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
