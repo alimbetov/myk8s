@@ -1,5 +1,71 @@
 # 17 — Secrets lifecycle and rotation
 
+## Учебная карта темы
+
+### Secret lifecycle шире Kubernetes Secret object
+
+```text
+credential created
+   ↓
+stored/delivered
+   ↓
+application consumes
+   ↓
+rotated
+   ↓
+new connection verified
+   ↓
+old credential revoked
+   ↓
+audit / expiry monitoring
+```
+
+Kubernetes Secret покрывает только часть:
+
+```text
+storage + API object + Pod delivery
+```
+
+### Rotation with overlap
+
+```text
+old works
+   ↓
+issue new
+   ↓
+update Secret
+   ↓
+rollout/reload
+   ↓
+verify
+   ↓
+revoke old
+```
+
+### Delivery variants
+
+```text
+env
+mounted Secret file
+Spring configtree
+CSI/external secret integration
+```
+
+### Annotated fragment
+
+```yaml
+volumes:
+  - name: db-secret
+    secret:
+      secretName: orders-db
+
+# mounted file может обновиться,
+# но Hikari/JVM не обязаны автоматически
+# перечитать credential.
+```
+
+Практика: [Secret configtree](../../showcases/15-secret-configtree/README.md).
+
 Проверено: 2026-09-20.
 
 Secret — не YAML type, а lifecycle: creation, delivery, use, rotation, revocation, audit and recovery.
